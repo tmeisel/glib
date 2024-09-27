@@ -3,6 +3,8 @@ package postgres
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/tmeisel/glib/exec/backoff"
 )
 
 type Config struct {
@@ -55,4 +57,9 @@ func (p Password) MarshalJSON() ([]byte, error) {
 	}
 
 	return json.Marshal(replace)
+}
+
+type RetryConfig struct {
+	Backoff *backoff.Backoff
+	Options []backoff.OptionFn
 }
