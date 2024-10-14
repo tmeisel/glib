@@ -15,11 +15,11 @@ type Server struct {
 }
 
 type ServerConfig struct {
-	ListenAddr   string         `envvar:"LISTEN_ADDR" default:"127.0.0.1"`
-	ListenPort   uint           `envvar:"LISTEN_PORT" default:"8080"`
-	ReadTimeout  *time.Duration `envvar:"READ_TIMEOUT" default:"20s"`
-	WriteTimeout *time.Duration `envvar:"WRITE_TIMEOUT" default:"5s"`
-	IdleTimeout  *time.Duration `envvar:"IDLE_TIMEOUT" default:"10s"`
+	ListenAddr   string         `envconfig:"LISTEN_ADDR" default:"127.0.0.1"`
+	ListenPort   uint           `envconfig:"LISTEN_PORT" default:"8080"`
+	ReadTimeout  *time.Duration `envconfig:"READ_TIMEOUT" default:"20s"`
+	WriteTimeout *time.Duration `envconfig:"WRITE_TIMEOUT" default:"5s"`
+	IdleTimeout  *time.Duration `envconfig:"IDLE_TIMEOUT" default:"10s"`
 }
 
 func NewServer(addr string, port uint) *Server {
