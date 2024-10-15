@@ -19,7 +19,7 @@ type Zap struct {
 
 var _ logPkg.Logger = &Zap{}
 
-func New(production bool, level logPkg.Level) *Zap {
+func New(production bool, level logPkg.Level, options ...zap.Option) *Zap {
 	atom := zap.NewAtomicLevel()
 	atom.SetLevel(zapcore.Level(level))
 
@@ -30,13 +30,21 @@ func New(production bool, level logPkg.Level) *Zap {
 		encoderCfg = zap.NewDevelopmentEncoderConfig()
 	}
 
-	logger := zap.New(zapcore.NewCore(
+	core := zapcore.NewCore(
 		zapcore.NewJSONEncoder(encoderCfg),
 		zapcore.Lock(os.Stdout),
 		atom,
-	))
+	)
 
-	return &Zap{atom: atom, logger: logger}
+	// do not change order. it allows overwriting
+	// with passed options
+	options = append([]zap.Option{
+		zap.AddStacktrace(zapcore.ErrorLevel),
+		zap.AddCaller(),
+		zap.AddCallerSkip(2),
+	}, options...)
+
+	return &Zap{atom: atom, logger: zap.New(core, options...)}
 }
 
 func (z *Zap) SetLevel(level logPkg.Level) error {
