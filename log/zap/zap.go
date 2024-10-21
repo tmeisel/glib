@@ -2,12 +2,14 @@ package zap
 
 import (
 	"context"
-	"fmt"
 	"os"
+
+	"github.com/tmeisel/glib/log/common"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
+	ctxPkg "github.com/tmeisel/glib/ctx"
 	logPkg "github.com/tmeisel/glib/log"
 	"github.com/tmeisel/glib/log/fields"
 )
@@ -70,22 +72,22 @@ func (z *Zap) Error(ctx context.Context, msg string, fields ...fields.Field) {
 }
 
 func (z *Zap) Debugf(ctx context.Context, format string, args ...interface{}) {
-	msg, fields := z.msg(format, args...)
+	msg, fields := common.ProcessFormatted(format, args...)
 	z.log(ctx, zap.DebugLevel, msg, fields...)
 }
 
 func (z *Zap) Infof(ctx context.Context, format string, args ...interface{}) {
-	msg, fields := z.msg(format, args...)
+	msg, fields := common.ProcessFormatted(format, args...)
 	z.log(ctx, zap.InfoLevel, msg, fields...)
 }
 
 func (z *Zap) Warnf(ctx context.Context, format string, args ...interface{}) {
-	msg, fields := z.msg(format, args...)
+	msg, fields := common.ProcessFormatted(format, args...)
 	z.log(ctx, zap.WarnLevel, msg, fields...)
 }
 
 func (z *Zap) Errorf(ctx context.Context, format string, args ...interface{}) {
-	msg, fields := z.msg(format, args...)
+	msg, fields := common.ProcessFormatted(format, args...)
 	z.log(ctx, zap.ErrorLevel, msg, fields...)
 }
 
@@ -94,27 +96,7 @@ func (z *Zap) Shutdown() error {
 }
 
 func (z *Zap) log(ctx context.Context, level zapcore.Level, msg string, fields ...fields.Field) {
-	z.logger.Log(level, msg, z.fields(ctx, fields...)...)
-}
-func (z *Zap) fields(_ context.Context, fields ...fields.Field) []zap.Field {
-	// @todo: join with fields from context
-	return fields
-}
+	f := common.JoinUnique(ctxPkg.GetUniqueLogFields(ctx), fields...)
 
-func (z *Zap) msg(format string, args ...interface{}) (string, []fields.Field) {
-	var fieldsOut []fields.Field
-	for _, arg := range args {
-		if field, ok := arg.(fields.Field); ok {
-			fieldsOut = append(fieldsOut, field)
-		}
-	}
-
-	fieldCount := len(fieldsOut)
-	if fieldCount == 0 {
-		return fmt.Sprintf(format, args...), nil
-	}
-
-	firstField := len(args) - fieldCount
-
-	return fmt.Sprintf(format, args[:firstField]...), fieldsOut
+	z.logger.Log(level, msg, f...)
 }

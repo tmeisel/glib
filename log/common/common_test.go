@@ -1,4 +1,4 @@
-package zap
+package common
 
 import (
 	"errors"
@@ -9,15 +9,13 @@ import (
 	"github.com/tmeisel/glib/log/fields"
 )
 
-func TestZap_msg(t *testing.T) {
+func TestUniqueFields(t *testing.T) {
 	type testCase struct {
 		format         string
 		args           []interface{}
 		expectedMsg    string
 		expectedFields []fields.Field
 	}
-
-	z := &Zap{}
 
 	for name, tc := range map[string]testCase{
 		"msg only": {
@@ -48,7 +46,7 @@ func TestZap_msg(t *testing.T) {
 		},
 	} {
 		t.Run(name, func(t *testing.T) {
-			output, fieldsOut := z.msg(tc.format, tc.args...)
+			output, fieldsOut := ProcessFormatted(tc.format, tc.args...)
 
 			assert.Equal(t, tc.expectedMsg, output)
 			assert.Equal(t, tc.expectedFields, fieldsOut)
