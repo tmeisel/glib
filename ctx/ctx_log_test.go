@@ -5,9 +5,26 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	logPkg "github.com/tmeisel/glib/log"
 	"github.com/tmeisel/glib/log/fields"
+	"github.com/tmeisel/glib/log/testlogger"
 )
+
+func TestWithLogger(t *testing.T) {
+	input := testlogger.New(logPkg.LevelDebug)
+
+	ctx := context.Background()
+	require.Nil(t, GetLogger(ctx))
+
+	ctx = WithLogger(ctx, input)
+	output := GetLogger(ctx)
+
+	require.NotNil(t, output)
+	assert.Implements(t, (*logPkg.Logger)(nil), output)
+
+}
 
 func TestWithLogField(t *testing.T) {
 	type testCase struct {

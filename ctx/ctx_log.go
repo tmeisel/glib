@@ -14,10 +14,13 @@ const (
 
 type contextKey string
 
+// WithLogger adds the given log.Logger to the context
 func WithLogger(ctx context.Context, logger log.Logger) context.Context {
 	return context.WithValue(ctx, ctxKeyLogger, logger)
 }
 
+// GetLogger returns a logger from the given context, if it
+// was added before with WithLogger
 func GetLogger(ctx context.Context) log.Logger {
 	value := ctx.Value(ctxKeyLogger)
 	if value == nil {
@@ -29,6 +32,10 @@ func GetLogger(ctx context.Context) log.Logger {
 
 // WithLogFields adds the given fields.Field f to the context
 func WithLogFields(ctx context.Context, f ...fields.Field) context.Context {
+	if len(f) == 0 {
+		return ctx
+	}
+
 	current := ctx.Value(ctxKeyFields)
 	if current == nil {
 		return context.WithValue(ctx, ctxKeyFields, f)

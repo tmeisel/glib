@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/stretchr/testify v1.9.0
-	github.com/tmeisel/glib/log v0.0.2
+	github.com/tmeisel/glib/log v0.0.3
 )
 
 require (
