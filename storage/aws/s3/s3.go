@@ -5,6 +5,7 @@ import (
 	"io"
 	"strings"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -19,7 +20,7 @@ type S3Storage struct {
 
 var _ storage.Service = &S3Storage{}
 
-func NewS3Storage(ctx context.Context, region string) (*S3Storage, error) {
+func New(ctx context.Context, region string) (*S3Storage, error) {
 	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion(region))
 	if err != nil {
 		return nil, err
@@ -33,6 +34,30 @@ func NewS3Storage(ctx context.Context, region string) (*S3Storage, error) {
 	}, nil
 }
 
+func NewWithCredentialProvider(ctx context.Context, region string, credentialProvider aws.CredentialsProvider) (*S3Storage, error) {
+	cfg, err := config.LoadDefaultConfig(ctx,
+		config.WithRegion(region),
+		config.WithCredentialsProvider(credentialProvider),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	client := s3.NewFromConfig(cfg)
+
+	return &S3Storage{
+		uploader: manager.NewUploader(client),
+		client:   client,
+	}, nil
+}
+
+func (s *S3Storage) GetBucket(name string) Bucket {
+	return Bucket{
+		bucketName: name,
+		storage:    s,
+	}
+}
+
 func (s *S3Storage) Upload(ctx context.Context, bucketName, objectKey string, reader io.Reader, metadata map[string]string) error {
 	_, err := s.uploader.Upload(ctx, &s3.PutObjectInput{
 		Bucket:   &bucketName,
@@ -43,7 +68,7 @@ func (s *S3Storage) Upload(ctx context.Context, bucketName, objectKey string, re
 	return err
 }
 
-func (s *S3Storage) Download(ctx context.Context, bucketName, objectKey string) (io.ReadCloser, error) {
+func (s *S3Storage) Download(ctx context.Context, bucketName, objectKey string) (*storage.Object, error) {
 	objectOutput, err := s.client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: &bucketName,
 		Key:    &objectKey,
@@ -53,7 +78,21 @@ func (s *S3Storage) Download(ctx context.Context, bucketName, objectKey string) 
 		return nil, err
 	}
 
-	return io.NopCloser(objectOutput.Body), nil
+	metadata := objectOutput.Metadata
+	if metadata == nil {
+		metadata = map[string]string{}
+	}
+
+	return &storage.Object{
+		ListObject: storage.ListObject{
+			Name:         objectKey,
+			Size:         *objectOutput.ContentLength,
+			LastModified: *objectOutput.LastModified,
+			Metadata:     metadata,
+			IsDirectory:  false,
+		},
+		Reader: io.NopCloser(objectOutput.Body),
+	}, nil
 }
 
 func (s *S3Storage) Delete(ctx context.Context, bucketName, objectKey string) error {
@@ -76,9 +115,9 @@ func (s *S3Storage) ListObjects(ctx context.Context, input storage.ListObjectsIn
 		return nil, err
 	}
 
-	var objects []storage.Object
+	var objects []storage.ListObject
 	for _, item := range resp.Contents {
-		objects = append(objects, storage.Object{
+		objects = append(objects, storage.ListObject{
 			Name:         *item.Key,
 			Size:         *item.Size,
 			LastModified: *item.LastModified,
@@ -93,7 +132,9 @@ func (s *S3Storage) ListObjects(ctx context.Context, input storage.ListObjectsIn
 	}
 
 	return &storage.ListObjectsOutput{
-		Objects: objects,
-		Next:    next,
+		BucketName: input.BucketName,
+		Prefix:     input.Prefix,
+		Objects:    objects,
+		Next:       next,
 	}, nil
 }
