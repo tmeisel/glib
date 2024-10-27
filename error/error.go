@@ -1,22 +1,33 @@
 package error
 
 import (
-	"errors"
+	"net/http"
 	"runtime"
+	"strconv"
+
+	"github.com/tmeisel/glib/utils/strutils"
 )
 
 const (
 	MaxStackDepth = 5
 )
 
+type Code int
+
+const (
+	CodeUser     Code = 40000
+	CodeNotFound Code = 40400
+	CodeInternal Code = 50000
+)
+
 type Error struct {
-	code     int
+	code     Code
 	msg      string
 	previous error
 	stack    []uintptr
 }
 
-func New(code int, msg string, prev error) error {
+func New(code Code, msg string, prev error) error {
 	stack := make([]uintptr, MaxStackDepth)
 	length := runtime.Callers(2, stack[:])
 
@@ -28,7 +39,35 @@ func New(code int, msg string, prev error) error {
 	}
 }
 
+func NewUser(prev error) error {
+	return NewUserMsg(prev, statusText(CodeUser))
+}
+
+func NewUserMsg(prev error, msg string) error {
+	return New(CodeUser, msg, prev)
+}
+
+func NewInternal(prev error) error {
+	return NewInternalMsg(prev, statusText(CodeInternal))
+}
+
+func NewInternalMsg(prev error, msg string) error {
+	return New(CodeInternal, msg, prev)
+}
+
+func (e Error) GetCode() Code {
+	return e.code
+}
+
+func (e Error) GetStatus() int {
+	return status(e.code)
+}
+
 func (e Error) Error() string {
+	return e.msg
+}
+
+func (e Error) Message() string {
 	return e.msg
 }
 
@@ -44,10 +83,15 @@ func (e Error) GetStack() []uintptr {
 	return e.stack
 }
 
-func GetStack(e error) []uintptr {
-	if errors.Is(e, Error{}) {
-		return e.(Error).GetStack()
-	}
+func status(code Code) int {
+	asString := strutils.SubString(strconv.Itoa(int(code)), 0, 3)
+	asInt, _ := strconv.Atoi(asString)
 
-	return nil
+	return asInt
+}
+
+// statusText returns the http status text corresponding to
+// the given
+func statusText(code Code) string {
+	return http.StatusText(status(code))
 }
