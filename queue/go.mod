@@ -38,9 +38,3 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace (
-	github.com/tmeisel/glib/clients/redis => ../clients/redis
-	github.com/tmeisel/glib/error => ../error
-	github.com/tmeisel/glib/testing => ../testing
-	github.com/tmeisel/glib/utils => ../utils
-)

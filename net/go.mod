@@ -17,8 +17,3 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace (
-	github.com/tmeisel/glib/error => ../error
-	github.com/tmeisel/glib/pagination => ../pagination
-	github.com/tmeisel/glib/utils => ../utils
-)

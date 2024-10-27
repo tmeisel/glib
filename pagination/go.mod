@@ -7,8 +7,3 @@ require (
 	github.com/tmeisel/glib/net v0.0.1
 )
 
-replace (
-	github.com/tmeisel/glib/error => ../error
-	github.com/tmeisel/glib/net => ../net
-	github.com/tmeisel/glib/utils => ../utils
-)

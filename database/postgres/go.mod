@@ -8,8 +8,8 @@ require (
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/golang-migrate/migrate/v4 v4.18.1
 	github.com/jackc/pgx/v5 v5.5.4
-	github.com/tmeisel/glib/exec v0.0.0-20241014192732-e9c51ee232a8
-	github.com/tmeisel/glib/testing v0.0.0-20241014192732-e9c51ee232a8
+	github.com/tmeisel/glib/exec v0.0.1
+	github.com/tmeisel/glib/testing v0.0.2
 )
 
 require (

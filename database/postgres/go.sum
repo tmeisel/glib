@@ -66,8 +66,10 @@ github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsT
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 github.com/tmeisel/glib/exec v0.0.0-20241014192732-e9c51ee232a8 h1:3IP6Ge7q/pXZon7etQu5KS/40fX9ea6MA8w3r0q2T+M=
 github.com/tmeisel/glib/exec v0.0.0-20241014192732-e9c51ee232a8/go.mod h1:jeQ8XGw+N/76EJwpuuJUf9+INEy0E7c77M5pbRkwRDg=
+github.com/tmeisel/glib/exec v0.0.1/go.mod h1:jeQ8XGw+N/76EJwpuuJUf9+INEy0E7c77M5pbRkwRDg=
 github.com/tmeisel/glib/testing v0.0.0-20241014192732-e9c51ee232a8 h1:xN6R7UViYsUhYKIhJd7iOamNv+huE+TfxC+vDvhGxCM=
 github.com/tmeisel/glib/testing v0.0.0-20241014192732-e9c51ee232a8/go.mod h1:wjkotHaS+fjtEeyhKBlm9vNJj8eZVcjLzSfsuyfqkSY=
+github.com/tmeisel/glib/testing v0.0.1/go.mod h1:wjkotHaS+fjtEeyhKBlm9vNJj8eZVcjLzSfsuyfqkSY=
 go.uber.org/atomic v1.7.0 h1:ADUqmZGgLDDfbSL9ZmPxKTybcoEYHgpYfELNoN+7hsw=
 go.uber.org/atomic v1.7.0/go.mod h1:fEN4uk6kAWBTFdckzkM89CLk9XfWZrxpCo0nPH17wJc=
 golang.org/x/crypto v0.28.0 h1:GBDwsMXVQi34v5CCYUm2jkJvu4cbtru2U4TN2PSyQnw=

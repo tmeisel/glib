@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/stretchr/testify v1.9.0
-	github.com/tmeisel/glib/ctx v0.0.1
+	github.com/tmeisel/glib/ctx v0.0.4
 	go.uber.org/zap v1.27.0
 )
 
