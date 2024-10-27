@@ -1,8 +1,10 @@
 package http
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"time"
 
@@ -22,17 +24,20 @@ type ServerConfig struct {
 	IdleTimeout  *time.Duration `envconfig:"IDLE_TIMEOUT" default:"10s"`
 }
 
-func NewServer(addr string, port uint) *Server {
+func NewServer(ctx context.Context, addr string, port uint) *Server {
 	return &Server{
 		router: mux.NewRouter(),
 		srv: http.Server{
 			Addr: fmt.Sprintf("%s:%d", addr, port),
+			BaseContext: func(_ net.Listener) context.Context {
+				return ctx
+			},
 		},
 	}
 }
 
-func NewServerFromConf(conf ServerConfig) *Server {
-	s := NewServer(conf.ListenAddr, conf.ListenPort)
+func NewServerFromConf(ctx context.Context, conf ServerConfig) *Server {
+	s := NewServer(ctx, conf.ListenAddr, conf.ListenPort)
 
 	if conf.ReadTimeout != nil {
 		s.SetReadTimeout(*conf.ReadTimeout)
