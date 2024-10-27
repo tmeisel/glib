@@ -6,8 +6,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/mvrilo/go-redoc v0.1.5
 	github.com/stretchr/testify v1.9.0
-	github.com/tmeisel/glib/error v0.0.1
-	github.com/tmeisel/glib/pagination v0.0.1
+	github.com/tmeisel/glib/error v0.0.2
 )
 
 require (
@@ -16,4 +15,3 @@ require (
 	github.com/tmeisel/glib/utils v0.0.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-

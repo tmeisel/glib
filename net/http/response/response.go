@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/tmeisel/glib/pagination"
+	"github.com/tmeisel/glib/net/pagination"
 
 	errPkg "github.com/tmeisel/glib/error"
 )
@@ -34,7 +34,7 @@ func WriteError(w http.ResponseWriter, err error) {
 func WriteErrorStatus(w http.ResponseWriter, status int, err error) {
 	code := status
 	if pkgErr, ok := err.(errPkg.Error); ok {
-		code = pkgErr.GetCode()
+		code = int(pkgErr.GetCode())
 	}
 
 	writeJson(w, status, response{Success: false, Error: &Error{
