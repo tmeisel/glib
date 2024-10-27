@@ -12,6 +12,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	postgresPkg "github.com/tmeisel/glib/database/postgres"
+	"github.com/tmeisel/glib/exec/backoff"
 	dockerPkg "github.com/tmeisel/glib/testing/docker"
 )
 
@@ -132,8 +133,6 @@ func (t *Postgres) initContainer(version string, maxLifetime time.Duration) erro
 }
 
 func (t *Postgres) waitForContainer(ctx context.Context, maxWaitTime time.Duration) error {
-	timeout := time.NewTimer(maxWaitTime)
-
 	conf := postgresPkg.Config{
 		Host:     "localhost",
 		Port:     t.exposedPort,
@@ -151,18 +150,25 @@ func (t *Postgres) waitForContainer(ctx context.Context, maxWaitTime time.Durati
 		return err
 	}
 
-	for {
-		if err := t.pgx.Ping(ctx); err == nil {
-			return nil
+	connectFn := func(ctx context.Context) error {
+		if err := t.pgx.Ping(ctx); err != nil {
+			return backoff.RetryableError(err)
 		}
 
-		retry := time.NewTicker(time.Second).C
-
-		select {
-		case <-timeout.C:
-			return err
-		case <-retry:
-			continue
-		}
+		return nil
 	}
+
+	retry, err := backoff.New(
+		backoff.Fibonacci,
+		time.Millisecond*50,
+		backoff.WithMaxDuration(maxWaitTime),
+		backoff.WithCap(time.Millisecond*500),
+	)
+
+	if err != nil {
+		// backoff init failed, try direct connect
+		return connectFn(ctx)
+	}
+
+	return retry.Do(ctx, connectFn)
 }
