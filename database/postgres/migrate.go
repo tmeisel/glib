@@ -5,9 +5,11 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/source/httpfs"
 	"net/http"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	"github.com/golang-migrate/migrate/v4/source/httpfs"
 )
 
 func Migrate(_ context.Context, migrations embed.FS, migrationsPath string, dsn string) error {
