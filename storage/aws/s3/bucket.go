@@ -1,4 +1,4 @@
-package s3storage
+package s3
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 
 type Bucket struct {
 	bucketName string
-	storage    *S3Storage
+	storage    *S3
 }
 
 var _ storage.Bucket = (*Bucket)(nil)

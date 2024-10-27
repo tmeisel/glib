@@ -1,4 +1,4 @@
-package azblobstorage
+package blobstorage
 
 import (
 	"bytes"

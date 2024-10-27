@@ -1,4 +1,4 @@
-package azblobstorage
+package blobstorage
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 
 type Bucket struct {
 	bucketName  string
-	blobStorage *AzBlobStorage
+	blobStorage *BlobStorage
 }
 
 var _ storage.Bucket = (*Bucket)(nil)

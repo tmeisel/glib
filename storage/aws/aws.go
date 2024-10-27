@@ -6,8 +6,8 @@ import (
 )
 
 type StaticCredentials struct {
-	AccessKeyID     string `envconfig:"AWS_ACCESS_KEY_ID"`
-	SecretAccessKey string `envconfig:"AWS_SECRET_ACCESS_KEY"`
+	AccessKeyID     string `envconfig:"ACCESS_KEY_ID"`
+	SecretAccessKey string `envconfig:"SECRET_ACCESS_KEY"`
 }
 
 func NewStaticCredentialProvider(c StaticCredentials) aws.CredentialsProvider {

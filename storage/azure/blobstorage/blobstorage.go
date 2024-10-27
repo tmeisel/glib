@@ -1,4 +1,4 @@
-package azblobstorage
+package blobstorage
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/tmeisel/glib/storage"
 )
 
-type AzBlobStorage struct {
+type BlobStorage struct {
 	serviceURL azblob.ServiceURL
 }
 
@@ -21,7 +21,7 @@ type AccessKeyConf struct {
 	AccountName string `envconfig:"ACCOUNT_NAME"`
 }
 
-func New(accountName, accountKey string) (*AzBlobStorage, error) {
+func New(accountName, accountKey string) (*BlobStorage, error) {
 	credential, err := azblob.NewSharedKeyCredential(accountName, accountKey)
 	if err != nil {
 		return nil, err
@@ -30,23 +30,23 @@ func New(accountName, accountKey string) (*AzBlobStorage, error) {
 	p := azblob.NewPipeline(credential, azblob.PipelineOptions{})
 	u, _ := url.Parse(fmt.Sprintf("https://%s.blob.core.windows.net", accountName))
 
-	return &AzBlobStorage{
+	return &BlobStorage{
 		serviceURL: azblob.NewServiceURL(*u, p),
 	}, nil
 }
 
-func NewFromConf(conf AccessKeyConf) (*AzBlobStorage, error) {
+func NewFromConf(conf AccessKeyConf) (*BlobStorage, error) {
 	return New(conf.AccountName, conf.AccessKey)
 }
 
-func (s *AzBlobStorage) GetBucket(name string) Bucket {
+func (s *BlobStorage) GetBucket(name string) Bucket {
 	return Bucket{
 		bucketName:  name,
 		blobStorage: s,
 	}
 }
 
-func (s *AzBlobStorage) Upload(ctx context.Context, containerName, blobName string, reader io.Reader, metadata map[string]string) error {
+func (s *BlobStorage) Upload(ctx context.Context, containerName, blobName string, reader io.Reader, metadata map[string]string) error {
 	containerURL := s.serviceURL.NewContainerURL(containerName)
 	bbURL := containerURL.NewBlockBlobURL(blobName)
 
@@ -57,7 +57,7 @@ func (s *AzBlobStorage) Upload(ctx context.Context, containerName, blobName stri
 	return err
 }
 
-func (s *AzBlobStorage) Download(ctx context.Context, containerName, blobName string) (*storage.Object, error) {
+func (s *BlobStorage) Download(ctx context.Context, containerName, blobName string) (*storage.Object, error) {
 	containerURL := s.serviceURL.NewContainerURL(containerName)
 	blobURL := containerURL.NewBlockBlobURL(blobName)
 
@@ -79,7 +79,7 @@ func (s *AzBlobStorage) Download(ctx context.Context, containerName, blobName st
 	}, nil
 }
 
-func (s *AzBlobStorage) Delete(ctx context.Context, containerName, blobName string) error {
+func (s *BlobStorage) Delete(ctx context.Context, containerName, blobName string) error {
 	containerURL := s.serviceURL.NewContainerURL(containerName)
 	blobURL := containerURL.NewBlobURL(blobName)
 
@@ -87,7 +87,7 @@ func (s *AzBlobStorage) Delete(ctx context.Context, containerName, blobName stri
 	return err
 }
 
-func (s *AzBlobStorage) ListObjects(ctx context.Context, input storage.ListObjectsInput) (*storage.ListObjectsOutput, error) {
+func (s *BlobStorage) ListObjects(ctx context.Context, input storage.ListObjectsInput) (*storage.ListObjectsOutput, error) {
 	containerURL := s.serviceURL.NewContainerURL(input.BucketName)
 	options := azblob.ListBlobsSegmentOptions{Prefix: input.Prefix}
 	marker := azblob.Marker{Val: input.ContinuationToken}
