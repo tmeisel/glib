@@ -1,21 +1,23 @@
 package redis
 
-import errPkg "github.com/tmeisel/glib/error"
+import (
+	"fmt"
+
+	"github.com/google/uuid"
+
+	errPkg "github.com/tmeisel/glib/error"
+)
 
 type Queue struct {
 	r    *Redis
 	name string
 }
 
-func (r Redis) Queue(name string) Queue {
+func (r Redis) Queue() Queue {
 	return Queue{
 		r:    &r,
-		name: name,
+		name: fmt.Sprintf("queue-%v", uuid.NewString()),
 	}
-}
-
-func (q Queue) Name() string {
-	return q.name
 }
 
 func (q Queue) Empty() error {
@@ -26,24 +28,24 @@ func (q Queue) Empty() error {
 	return nil
 }
 
-func (q Queue) LPush(key, value string) error {
-	if err := q.r.client.LPush(q.name, key, value).Err(); err != nil {
+func (q Queue) LPush(value string) error {
+	if err := q.r.client.LPush(q.name, value).Err(); err != nil {
 		return errPkg.NewInternalMsg(err, "failed to push value")
 	}
 
 	return nil
 }
 
-func (q Queue) RPush(key, value string) error {
-	if err := q.r.client.RPush(q.name, key, value).Err(); err != nil {
+func (q Queue) RPush(value string) error {
+	if err := q.r.client.RPush(q.name, value).Err(); err != nil {
 		return errPkg.NewInternalMsg(err, "failed to push value")
 	}
 
 	return nil
 }
 
-func (q Queue) LPop(key string) (string, error) {
-	res := q.r.client.LPop(key)
+func (q Queue) LPop() (string, error) {
+	res := q.r.client.LPop(q.name)
 
 	if err := res.Err(); err != nil {
 		return "", errPkg.NewInternalMsg(err, "failed to pop value")
@@ -52,8 +54,8 @@ func (q Queue) LPop(key string) (string, error) {
 	return res.String(), nil
 }
 
-func (q Queue) RPop(key string) (string, error) {
-	res := q.r.client.RPop(key)
+func (q Queue) RPop() (string, error) {
+	res := q.r.client.RPop(q.name)
 
 	if err := res.Err(); err != nil {
 		return "", errPkg.NewInternalMsg(err, "failed to pop value")

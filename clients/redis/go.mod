@@ -6,6 +6,7 @@ toolchain go1.23.1
 
 require (
 	github.com/go-redis/redis v6.15.9+incompatible
+	github.com/google/uuid v1.6.0
 	github.com/stretchr/testify v1.9.0
 	github.com/tmeisel/glib/error v0.0.2
 	github.com/tmeisel/glib/exec v0.0.1

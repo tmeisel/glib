@@ -6,11 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/stretchr/testify/assert"
 
 	"github.com/tmeisel/glib/clients/redis/docker"
+	"github.com/tmeisel/glib/queue"
 )
 
 var (
@@ -29,25 +28,13 @@ func TestMain(m *testing.M) {
 }
 
 func TestNew(t *testing.T) {
-	const name = "testQueue"
+	client := New(container.GetConfig())
 
-	client := New(container.GetConfig(), name)
-	assert.Equal(t, name, client.Name())
-
-	const key = "testQueue"
-	const value = "testValue"
-
-	require.NoError(t, client.LPush(key, value))
+	assert.Implements(t, (*queue.Queue)(nil), client)
 }
 
 func TestNewFromClient(t *testing.T) {
-	const name = "testQueue"
+	client := NewFromClient(container.GetClient())
 
-	client := NewFromClient(container.GetClient(), name)
-	assert.Equal(t, name, client.Name())
-
-	const key = "testQueue"
-	const value = "testValue"
-
-	require.NoError(t, client.LPush(key, value))
+	assert.Implements(t, (*queue.Queue)(nil), client)
 }
