@@ -12,14 +12,6 @@ const (
 	MaxStackDepth = 5
 )
 
-type Code int
-
-const (
-	CodeUser     Code = 40000
-	CodeNotFound Code = 40400
-	CodeInternal Code = 50000
-)
-
 type Error struct {
 	code     Code
 	msg      string
