@@ -2,8 +2,10 @@ package response
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/tmeisel/glib/net/pagination"
 
@@ -49,6 +51,20 @@ func WriteJson(w http.ResponseWriter, status int, v any) {
 
 func WritePaginated(w http.ResponseWriter, v any, pagination *pagination.Response) {
 	writeJson(w, http.StatusOK, response{Success: true, Pagination: pagination, Content: v})
+}
+
+// ETag sets an ETag header with the given value val
+func ETag(w http.ResponseWriter, weak bool, val string) {
+	if weak {
+		val = fmt.Sprintf(`W/"%s"`, val)
+	}
+
+	w.Header().Set("ETag", val)
+}
+
+// LastModified sets a Last-Modified Header using the given timestamp t
+func LastModified(w http.ResponseWriter, t time.Time) {
+	w.Header().Set("Last-Modified", t.Format(http.TimeFormat))
 }
 
 func writeJson(w http.ResponseWriter, status int, v any) {
