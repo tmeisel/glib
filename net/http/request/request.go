@@ -11,13 +11,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var (
+	ErrNoSuchHeader = errPkg.NewUserMsg(nil, "no such header")
+)
+
 func GetRouteParam(r *http.Request, key string) string {
 	return mux.Vars(r)[key]
 }
 
 // IfNoneMatch returns true, if the given Etag does not equal the requests If-None-Match header
-func IfNoneMatch(r *http.Request, ETag string) bool {
-	return r.Header.Get("If-None-Match") != ETag
+func IfNoneMatch(r *http.Request, ETag string) (bool, error) {
+	headerValue := r.Header.Get("If-None-Match")
+	if headerValue == "" {
+		return false, ErrNoSuchHeader
+	}
+
+	return headerValue != ETag, nil
 }
 
 // IfMatch returns true, if the given Etag equals the requests If-Match header
@@ -28,7 +37,12 @@ func IfMatch(r *http.Request, ETag string) bool {
 // IfModifiedSince returns true, if lastUpdate is greater than
 // the time specified in the requests If-Modified-Since header.
 func IfModifiedSince(r *http.Request, lastUpdate time.Time) (bool, error) {
-	since, err := time.Parse(time.RFC1123, r.Header.Get("If-Modified-Since"))
+	headerValue := r.Header.Get("If-Modified-Since")
+	if headerValue == "" {
+		return false, ErrNoSuchHeader
+	}
+
+	since, err := time.Parse(time.RFC1123, headerValue)
 	if err != nil {
 		return false, errPkg.NewUserMsg(err, "Could not parse If-Modified-Since header")
 	}
@@ -39,7 +53,12 @@ func IfModifiedSince(r *http.Request, lastUpdate time.Time) (bool, error) {
 // IfUnmodifiedSince returns true, if lastUpdate is not greater than
 // the time specified in the requests If-Unmodified-Since header.
 func IfUnmodifiedSince(r *http.Request, lastUpdate time.Time) (bool, error) {
-	since, err := time.Parse(time.RFC1123, r.Header.Get("If-Unmodified-Since"))
+	headerValue := r.Header.Get("If-Unmodified-Since")
+	if headerValue == "" {
+		return false, ErrNoSuchHeader
+	}
+
+	since, err := time.Parse(time.RFC1123, headerValue)
 	if err != nil {
 		return false, errPkg.NewUserMsg(err, "Could not parse If-Unmodified Since header")
 	}
