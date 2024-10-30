@@ -3,8 +3,8 @@ package postgres
 import (
 	"errors"
 
-	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 
 	"github.com/tmeisel/glib/database"
 )
@@ -18,15 +18,15 @@ func ProcessError(err error) error {
 		return database.ErrNoRows
 	}
 
-	if pgErr, ok := err.(*pgconn.PgError); ok {
-		column := pgErr.ColumnName
+	if pgconnErr, ok := err.(*pgconn.PgError); ok {
+		column := pgconnErr.ColumnName
 		if column == "" {
-			column = pgErr.ConstraintName
+			column = pgconnErr.ConstraintName
 		}
 
-		switch pgErr.Code {
+		switch pgconnErr.Code {
 		case CodeDuplicateKey:
-			return database.NewDuplicateKeyError(pgErr, &column)
+			return database.NewDuplicateKeyError(pgconnErr, &column)
 		}
 	}
 

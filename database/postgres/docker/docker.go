@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pkg/errors"
+
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5/pgxpool"
 
@@ -53,11 +55,11 @@ func NewPostgres(ctx context.Context, version string, maxContainerLifetime, wait
 	t := &Postgres{}
 
 	if err := t.initContainer(version, maxContainerLifetime); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "init container")
 	}
 
 	if err := t.waitForContainer(ctx, waitTime); err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "wait for container")
 	}
 
 	return t, nil
@@ -140,7 +142,7 @@ func (t *Postgres) waitForContainer(ctx context.Context, maxWaitTime time.Durati
 		Password: password,
 		Database: database,
 		Params: map[string]string{
-			"SSLMode": "disable",
+			"sslmode": "disable",
 		},
 	}
 
