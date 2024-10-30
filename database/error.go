@@ -1,6 +1,10 @@
 package database
 
-import errorPkg "github.com/tmeisel/glib/error"
+import (
+	"fmt"
+
+	errorPkg "github.com/tmeisel/glib/error"
+)
 
 var (
 	ErrNoRows = errorPkg.New(errorPkg.CodeNotFound, errorPkg.CodeNotFound.String(), nil)
@@ -18,4 +22,13 @@ func NewDbErrorMsg(err error, msg string) error {
 		msg,
 		err,
 	)
+}
+
+func NewDuplicateKeyError(prev error, column *string) error {
+	msg := "duplicate key error"
+	if column != nil {
+		msg = fmt.Sprintf("duplicate key in column %s", *column)
+	}
+
+	return errorPkg.New(errorPkg.CodeConflict, msg, prev)
 }
