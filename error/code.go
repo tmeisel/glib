@@ -5,6 +5,7 @@ type Code int
 const (
 	CodeUser     Code = 40000
 	CodeNotFound Code = 40400
+	CodeConflict Code = 40900
 	CodeInternal Code = 50000
 )
 

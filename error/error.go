@@ -19,11 +19,11 @@ type Error struct {
 	stack    []uintptr
 }
 
-func New(code Code, msg string, prev error) error {
+func New(code Code, msg string, prev error) *Error {
 	stack := make([]uintptr, MaxStackDepth)
 	length := runtime.Callers(2, stack[:])
 
-	return Error{
+	return &Error{
 		code:     code,
 		msg:      msg,
 		previous: prev,
@@ -31,19 +31,19 @@ func New(code Code, msg string, prev error) error {
 	}
 }
 
-func NewUser(prev error) error {
+func NewUser(prev error) *Error {
 	return NewUserMsg(prev, statusText(CodeUser))
 }
 
-func NewUserMsg(prev error, msg string) error {
+func NewUserMsg(prev error, msg string) *Error {
 	return New(CodeUser, msg, prev)
 }
 
-func NewInternal(prev error) error {
+func NewInternal(prev error) *Error {
 	return NewInternalMsg(prev, statusText(CodeInternal))
 }
 
-func NewInternalMsg(prev error, msg string) error {
+func NewInternalMsg(prev error, msg string) *Error {
 	return New(CodeInternal, msg, prev)
 }
 
@@ -67,8 +67,15 @@ func (e Error) Unwrap() error {
 	if e.previous != nil {
 		return e.previous
 	}
-
 	return nil
+}
+
+func (e Error) Is(err error) bool {
+	if pkgErr, ok := err.(Error); ok {
+		return pkgErr.code == e.code && pkgErr.msg == e.msg
+	}
+
+	return false
 }
 
 func (e Error) GetStack() []uintptr {
