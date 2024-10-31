@@ -10,25 +10,19 @@ var (
 	ErrNoRows = errorPkg.New(errorPkg.CodeNotFound, errorPkg.CodeNotFound.String(), nil)
 )
 
-type Error errorPkg.Error
-
-func NewDbError(err error) error {
-	return NewDbErrorMsg(err, errorPkg.CodeInternal.String())
+func NewError(err error) *errorPkg.Error {
+	return NewErrorMsg(err, errorPkg.CodeInternal.String())
 }
 
-func NewDbErrorMsg(err error, msg string) error {
-	return errorPkg.New(
-		errorPkg.CodeInternal,
-		msg,
-		err,
-	)
+func NewErrorMsg(err error, msg string) *errorPkg.Error {
+	return errorPkg.New(errorPkg.CodeInternal, msg, err)
 }
 
-func NewDuplicateKeyError(prev error, column *string) error {
+func NewDuplicateKeyError(prev error, column *string) *errorPkg.Error {
 	msg := "duplicate key error"
 	if column != nil {
 		msg = fmt.Sprintf("duplicate key in column %s", *column)
 	}
 
-	return errorPkg.New(errorPkg.CodeConflict, msg, prev)
+	return errorPkg.New(errorPkg.CodeDuplicateKey, msg, prev)
 }
