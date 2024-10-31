@@ -90,10 +90,10 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
-github.com/tmeisel/glib/database v0.0.2 h1:de7gOOyoddWQ04Tkmx8y1X/h3yccCwQQlFvrknQY6SA=
-github.com/tmeisel/glib/database v0.0.2/go.mod h1:0EEOMbgmOI7okp5WbzStpzxQTbz+aq49UtwNbn97FH4=
-github.com/tmeisel/glib/error v0.0.5 h1:XNI4KacGrdtGDcTgyR3kCEPFBHckbnP9sSe7cce9nO0=
-github.com/tmeisel/glib/error v0.0.5/go.mod h1:vqEgEXluH8R2KHKntCPx0u9UexMinWUxlRCn+JmsykM=
+github.com/tmeisel/glib/database v0.0.3 h1:TvWqdsQzQMIIE/DsI31+jGJJE/Kc5x0eKCMkFkV/g7k=
+github.com/tmeisel/glib/database v0.0.3/go.mod h1:/S60X+jSZwRcZT/gywRsCJ8u0nT6L+27qCY/dxVLsrk=
+github.com/tmeisel/glib/error v0.0.6 h1:0sEmlhf/68GpX8AbVKP2Ab1QM4G1BgQlYBkt57K4T2Y=
+github.com/tmeisel/glib/error v0.0.6/go.mod h1:vqEgEXluH8R2KHKntCPx0u9UexMinWUxlRCn+JmsykM=
 github.com/tmeisel/glib/exec v0.0.1 h1:4xeg5OsaUzpOn3HIxyCnZG8xv64gKNJsggIYOhLjPCs=
 github.com/tmeisel/glib/exec v0.0.1/go.mod h1:jeQ8XGw+N/76EJwpuuJUf9+INEy0E7c77M5pbRkwRDg=
 github.com/tmeisel/glib/testing v0.0.2 h1:Kl3u16EPKRSe4hDE4ZRpKcfFGXsiXzRFGpRrYI8g1m0=
