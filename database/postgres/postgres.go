@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	errPkg "github.com/tmeisel/glib/error"
 	"github.com/tmeisel/glib/exec/backoff"
 )
 
@@ -18,18 +19,22 @@ func Init(ctx context.Context, conf Config, retryConf *RetryConfig) (pool *pgxpo
 	b := retryConf.Backoff
 	b.With(retryConf.Options...)
 
+	pool, err = pgxpool.New(ctx, conf.DSN())
+	if err != nil {
+		return nil, errPkg.NewInternal(err)
+	}
+
 	err = b.Do(ctx, func(ctx context.Context) error {
-		pool, err = pgxpool.New(ctx, conf.DSN())
-
+		err = pool.Ping(ctx)
 		if err != nil {
-			if errors.Is(err, &pgconn.ConnectError{}) {
-				return backoff.RetryableError(err)
-			}
-
-			return err
+			return nil
 		}
 
-		return nil
+		if errors.Is(err, &pgconn.ConnectError{}) {
+			return backoff.RetryableError(err)
+		}
+
+		return err
 	})
 
 	return
