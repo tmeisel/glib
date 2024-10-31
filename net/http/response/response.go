@@ -26,7 +26,7 @@ type Error struct {
 
 func WriteError(w http.ResponseWriter, err error) {
 	status := http.StatusInternalServerError
-	if pkgErr, ok := err.(errPkg.Error); ok {
+	if pkgErr, ok := err.(*errPkg.Error); ok {
 		status = pkgErr.GetStatus()
 	}
 
@@ -35,8 +35,13 @@ func WriteError(w http.ResponseWriter, err error) {
 
 func WriteErrorStatus(w http.ResponseWriter, status int, err error) {
 	code := status
-	if pkgErr, ok := err.(errPkg.Error); ok {
+	if pkgErr, ok := err.(*errPkg.Error); ok {
 		code = int(pkgErr.GetCode())
+	}
+
+	// from e.g. http status 500 => code 50000
+	if code < 1000 {
+		code = code * 100
 	}
 
 	writeJson(w, status, response{Success: false, Error: &Error{
