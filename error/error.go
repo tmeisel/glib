@@ -13,10 +13,10 @@ const (
 )
 
 type Error struct {
-	code     Code
-	msg      string
-	previous error
-	stack    []uintptr
+	code  Code
+	msg   string
+	prev  error
+	stack []uintptr
 }
 
 func New(code Code, msg string, prev error) *Error {
@@ -24,10 +24,10 @@ func New(code Code, msg string, prev error) *Error {
 	length := runtime.Callers(2, stack[:])
 
 	return &Error{
-		code:     code,
-		msg:      msg,
-		previous: prev,
-		stack:    stack[:length],
+		code:  code,
+		msg:   msg,
+		prev:  prev,
+		stack: stack[:length],
 	}
 }
 
@@ -64,14 +64,14 @@ func (e Error) Message() string {
 }
 
 func (e Error) Unwrap() error {
-	if e.previous != nil {
-		return e.previous
+	if e.prev != nil {
+		return e.prev
 	}
 	return nil
 }
 
 func (e Error) Is(err error) bool {
-	if pkgErr, ok := err.(Error); ok {
+	if pkgErr, ok := err.(*Error); ok {
 		return pkgErr.code == e.code && pkgErr.msg == e.msg
 	}
 
