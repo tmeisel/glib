@@ -8,6 +8,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgconn"
+
+	"github.com/tmeisel/glib/database"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -57,6 +61,32 @@ func TestProcessError(t *testing.T) {
 
 	pkgErr, ok := err.(*errPkg.Error)
 	require.True(t, ok)
-	assert.Equal(t, errPkg.CodeConflict, pkgErr.GetCode())
+	assert.Equal(t, errPkg.CodeDuplicateKey, pkgErr.GetCode())
 
+}
+
+func TestIsDuplicateKeyError(t *testing.T) {
+	type testCase struct {
+		Input    error
+		Expected bool
+	}
+
+	for name, tc := range map[string]testCase{
+		"nil": {
+			Input:    nil,
+			Expected: false,
+		},
+		"errPkg": {
+			Input:    database.NewDuplicateKeyError(nil, nil),
+			Expected: true,
+		},
+		"pgErr": {
+			Input:    &pgconn.PgError{Code: postgresPkg.CodeDuplicateKey},
+			Expected: true,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			assert.Equal(t, tc.Expected, postgresPkg.IsDuplicateKeyError(tc.Input))
+		})
+	}
 }
