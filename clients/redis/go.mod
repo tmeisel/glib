@@ -8,9 +8,11 @@ require (
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/uuid v1.6.0
 	github.com/stretchr/testify v1.9.0
-	github.com/tmeisel/glib/error v0.0.2
+	github.com/tmeisel/glib/error v0.0.6
 	github.com/tmeisel/glib/exec v0.0.1
+	github.com/tmeisel/glib/queue v0.0.4
 	github.com/tmeisel/glib/testing v0.0.2
+	gotest.tools v2.2.0+incompatible
 )
 
 require (
@@ -22,6 +24,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
+	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.34.2 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect

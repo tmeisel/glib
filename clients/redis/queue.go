@@ -1,11 +1,14 @@
 package redis
 
 import (
+	"errors"
 	"fmt"
 
+	"github.com/go-redis/redis"
 	"github.com/google/uuid"
 
 	errPkg "github.com/tmeisel/glib/error"
+	queuePkg "github.com/tmeisel/glib/queue"
 )
 
 type Queue struct {
@@ -48,18 +51,26 @@ func (q Queue) LPop() (string, error) {
 	res := q.r.client.LPop(q.name)
 
 	if err := res.Err(); err != nil {
-		return "", errPkg.NewInternalMsg(err, "failed to pop value")
+		if errors.Is(err, redis.Nil) {
+			return "", queuePkg.ErrEmpty
+		}
+
+		return "", err
 	}
 
-	return res.String(), nil
+	return res.Val(), nil
 }
 
 func (q Queue) RPop() (string, error) {
 	res := q.r.client.RPop(q.name)
 
 	if err := res.Err(); err != nil {
-		return "", errPkg.NewInternalMsg(err, "failed to pop value")
+		if errors.Is(err, redis.Nil) {
+			return "", queuePkg.ErrEmpty
+		}
+
+		return "", err
 	}
 
-	return res.String(), nil
+	return res.Val(), nil
 }
