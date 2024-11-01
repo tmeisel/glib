@@ -6,7 +6,7 @@ toolchain go1.23.1
 
 require (
 	github.com/stretchr/testify v1.9.0
-	github.com/tmeisel/glib/clients/redis v0.0.1
+	github.com/tmeisel/glib/clients/redis v0.0.2
 )
 
 require (
@@ -19,6 +19,7 @@ require (
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect

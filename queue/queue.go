@@ -1,5 +1,11 @@
 package queue
 
+import "errors"
+
+var (
+	ErrEmpty = errors.New("queue is empty")
+)
+
 type Queue interface {
 	// LPush adds an element at the head of the queue
 	LPush(value string) error
