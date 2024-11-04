@@ -5,8 +5,9 @@ go 1.22
 toolchain go1.23.1
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/stretchr/testify v1.9.0
-	github.com/tmeisel/glib/clients/redis v0.0.2
+	github.com/tmeisel/glib/clients/redis v0.0.4
 )
 
 require (
@@ -19,7 +20,6 @@ require (
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.0 // indirect
@@ -29,7 +29,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/tmeisel/glib/error v0.0.2 // indirect
+	github.com/tmeisel/glib/error v0.0.6 // indirect
 	github.com/tmeisel/glib/exec v0.0.1 // indirect
 	github.com/tmeisel/glib/testing v0.0.2 // indirect
 	github.com/tmeisel/glib/utils v0.0.1 // indirect

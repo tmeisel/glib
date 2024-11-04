@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/tmeisel/glib/clients/redis/docker"
@@ -28,13 +29,13 @@ func TestMain(m *testing.M) {
 }
 
 func TestNew(t *testing.T) {
-	client := New(container.GetConfig())
+	client := New(container.GetConfig(), uuid.NewString(), time.Second)
 
 	assert.Implements(t, (*queue.Queue)(nil), client)
 }
 
 func TestNewFromClient(t *testing.T) {
-	client := NewFromClient(container.GetClient())
+	client := NewFromClient(container.GetClient(), uuid.NewString(), time.Second)
 
 	assert.Implements(t, (*queue.Queue)(nil), client)
 }

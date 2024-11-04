@@ -53,10 +53,10 @@ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
-github.com/tmeisel/glib/clients/redis v0.0.2 h1:5naTautacHGB0s8R56xIyCK3vZhgq6ZMiLRfF5UEViI=
-github.com/tmeisel/glib/clients/redis v0.0.2/go.mod h1:TnNjNog647HDgou1CNVGnjRsxxWgQkkFwpJq0TMLJXg=
-github.com/tmeisel/glib/error v0.0.2 h1:cHC+vGh5jt1U9cabx8l7U664HOX7lqrWso8yDwIATFQ=
-github.com/tmeisel/glib/error v0.0.2/go.mod h1:DhElvZ83qXnjZHab3J9vHS5F2xeV+T22ZAebmwHdvPc=
+github.com/tmeisel/glib/clients/redis v0.0.4 h1:jA9bxKyq66XUkhX9O70ZyKlJZCDYmm2mow+vSTOdSY8=
+github.com/tmeisel/glib/clients/redis v0.0.4/go.mod h1:Urodk7wghVlo9vRLVcmcsukGSoBVnlsX3JTAK5ctt9Y=
+github.com/tmeisel/glib/error v0.0.6 h1:0sEmlhf/68GpX8AbVKP2Ab1QM4G1BgQlYBkt57K4T2Y=
+github.com/tmeisel/glib/error v0.0.6/go.mod h1:vqEgEXluH8R2KHKntCPx0u9UexMinWUxlRCn+JmsykM=
 github.com/tmeisel/glib/exec v0.0.1 h1:4xeg5OsaUzpOn3HIxyCnZG8xv64gKNJsggIYOhLjPCs=
 github.com/tmeisel/glib/exec v0.0.1/go.mod h1:jeQ8XGw+N/76EJwpuuJUf9+INEy0E7c77M5pbRkwRDg=
 github.com/tmeisel/glib/testing v0.0.2 h1:Kl3u16EPKRSe4hDE4ZRpKcfFGXsiXzRFGpRrYI8g1m0=
