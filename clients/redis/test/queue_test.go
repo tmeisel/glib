@@ -2,6 +2,9 @@ package test
 
 import (
 	"testing"
+	"time"
+
+	"github.com/google/uuid"
 
 	"github.com/stretchr/testify/require"
 	"gotest.tools/assert"
@@ -10,12 +13,12 @@ import (
 )
 
 func TestQueue(t *testing.T) {
-	queue := client.Queue()
+	queue := client.Queue(uuid.NewString(), time.Second)
 	require.Implements(t, (*queuePkg.Queue)(nil), queue)
 }
 
 func TestLPop(t *testing.T) {
-	queue := client.Queue()
+	queue := client.Queue(uuid.NewString(), time.Second)
 
 	// empty queue
 	_, err := queue.RPop()
@@ -31,7 +34,7 @@ func TestLPop(t *testing.T) {
 }
 
 func TestRPop(t *testing.T) {
-	queue := client.Queue()
+	queue := client.Queue(uuid.NewString(), time.Second)
 
 	// empty queue
 	_, err := queue.RPop()
