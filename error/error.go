@@ -12,6 +12,14 @@ const (
 	MaxStackDepth = 5
 )
 
+func IsDuplicateKeyErr(err error) bool {
+	if pkgErr, ok := err.(*Error); ok {
+		return pkgErr.GetCode() == CodeDuplicateKey
+	}
+
+	return false
+}
+
 type Error struct {
 	code  Code
 	msg   string

@@ -1,10 +1,10 @@
 module github.com/tmeisel/glib/error
 
-go 1.21
+go 1.23.1
 
 require (
 	github.com/stretchr/testify v1.9.0
-	github.com/tmeisel/glib/utils v0.0.1
+	github.com/tmeisel/glib/utils v0.0.2
 )
 
 require (
