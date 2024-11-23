@@ -19,6 +19,36 @@ func returnMyError() error {
 	return myErrorTest
 }
 
+func TestIs(t *testing.T) {
+	type testCase struct {
+		Error    error
+		Code     Code
+		Expected bool
+	}
+
+	for name, tc := range map[string]testCase{
+		"other error": {
+			Error:    errors.New("some error"),
+			Code:     CodeUser,
+			Expected: false,
+		},
+		"duplicate key error": {
+			Error:    New(CodeDuplicateKey, "msg", nil),
+			Code:     CodeDuplicateKey,
+			Expected: true,
+		},
+		"not duplicate key error": {
+			Error:    New(CodeDuplicateKey, "msg", nil),
+			Code:     CodeUser,
+			Expected: false,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			assert.Equal(t, tc.Expected, Is(tc.Error, tc.Code))
+		})
+	}
+}
+
 func TestIsDuplicateKeyErr(t *testing.T) {
 	type testCase struct {
 		Input    error

@@ -12,14 +12,6 @@ const (
 	MaxStackDepth = 5
 )
 
-func IsDuplicateKeyErr(err error) bool {
-	if pkgErr, ok := err.(*Error); ok {
-		return pkgErr.GetCode() == CodeDuplicateKey
-	}
-
-	return false
-}
-
 type Error struct {
 	code  Code
 	msg   string
@@ -63,6 +55,10 @@ func (e Error) GetStatus() int {
 	return status(e.code)
 }
 
+func (e Error) GetStack() []uintptr {
+	return e.stack
+}
+
 func (e Error) Error() string {
 	return e.msg
 }
@@ -86,8 +82,20 @@ func (e Error) Is(err error) bool {
 	return false
 }
 
-func (e Error) GetStack() []uintptr {
-	return e.stack
+func Is(err error, code Code) bool {
+	if pkgErr, ok := err.(*Error); ok {
+		return pkgErr.code == code
+	}
+
+	return false
+}
+
+func IsErrNotFound(err error) bool {
+	return Is(err, CodeNotFound)
+}
+
+func IsDuplicateKeyErr(err error) bool {
+	return Is(err, CodeDuplicateKey)
 }
 
 func status(code Code) int {
