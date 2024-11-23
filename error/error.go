@@ -1,11 +1,7 @@
 package error
 
 import (
-	"net/http"
 	"runtime"
-	"strconv"
-
-	"github.com/tmeisel/glib/utils/strutils"
 )
 
 const (
@@ -32,7 +28,7 @@ func New(code Code, msg string, prev error) *Error {
 }
 
 func NewUser(prev error) *Error {
-	return NewUserMsg(prev, statusText(CodeUser))
+	return NewUserMsg(prev, CodeUser.HttpStatusText())
 }
 
 func NewUserMsg(prev error, msg string) *Error {
@@ -40,7 +36,7 @@ func NewUserMsg(prev error, msg string) *Error {
 }
 
 func NewInternal(prev error) *Error {
-	return NewInternalMsg(prev, statusText(CodeInternal))
+	return NewInternalMsg(prev, CodeInternal.HttpStatusText())
 }
 
 func NewInternalMsg(prev error, msg string) *Error {
@@ -52,7 +48,7 @@ func (e Error) GetCode() Code {
 }
 
 func (e Error) GetStatus() int {
-	return status(e.code)
+	return e.code.HttpStatus()
 }
 
 func (e Error) GetStack() []uintptr {
@@ -96,17 +92,4 @@ func IsErrNotFound(err error) bool {
 
 func IsDuplicateKeyErr(err error) bool {
 	return Is(err, CodeDuplicateKey)
-}
-
-func status(code Code) int {
-	asString := strutils.SubString(strconv.Itoa(int(code)), 0, 3)
-	asInt, _ := strconv.Atoi(asString)
-
-	return asInt
-}
-
-// statusText returns the http status text corresponding to
-// the given
-func statusText(code Code) string {
-	return http.StatusText(status(code))
 }
