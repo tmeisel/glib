@@ -108,6 +108,7 @@ func (s *S3) ListObjects(ctx context.Context, input storage.ListObjectsInput) (*
 	resp, err := s.client.ListObjectsV2(ctx, &s3.ListObjectsV2Input{
 		Bucket:            &input.BucketName,
 		Prefix:            &input.Prefix,
+		Delimiter:         aws.String("/"),
 		ContinuationToken: input.ContinuationToken,
 	})
 
