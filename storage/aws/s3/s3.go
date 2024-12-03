@@ -105,10 +105,18 @@ func (s *S3) Delete(ctx context.Context, bucketName, objectKey string) error {
 }
 
 func (s *S3) ListObjects(ctx context.Context, input storage.ListObjectsInput) (*storage.ListObjectsOutput, error) {
+	// prefix must not start with a /
+	prefix := strings.Trim(input.Prefix, "/")
+
+	// prefix should have a trailing /
+	// unless it is the
+	if prefix != "" {
+		prefix = prefix + "/"
+	}
+
 	resp, err := s.client.ListObjectsV2(ctx, &s3.ListObjectsV2Input{
 		Bucket:            &input.BucketName,
-		Prefix:            &input.Prefix,
-		Delimiter:         aws.String("/"),
+		Prefix:            &prefix,
 		ContinuationToken: input.ContinuationToken,
 	})
 

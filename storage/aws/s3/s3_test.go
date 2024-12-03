@@ -15,13 +15,18 @@ import (
 )
 
 var (
-	accessKeyID     = os.Getenv("AWS_ACCESS_KEY_ID")
-	secretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
+	accessKeyID     string
+	secretAccessKey string
 )
 
 const (
 	bucketName = "glib-s3-testing"
 )
+
+func init() {
+	accessKeyID = os.Getenv("AWS_ACCESS_KEY_ID")
+	secretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
+}
 
 func TestNewWithCredentialProvider(t *testing.T) {
 	if accessKeyID == "" || secretAccessKey == "" {
@@ -108,5 +113,75 @@ func TestAzBlobStorage_Upload(t *testing.T) {
 			require.Error(t, err)
 		})
 	}
+}
 
+func TestS3_ListObjects(t *testing.T) {
+	if accessKeyID == "" || secretAccessKey == "" {
+		t.Skip("missing AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY")
+	}
+
+	ctx := context.Background()
+	cp := aws.NewStaticCredentialProvider(aws.StaticCredentials{
+		AccessKeyID:     accessKeyID,
+		SecretAccessKey: secretAccessKey,
+	})
+
+	s3, err := NewWithCredentialProvider(ctx, "eu-central-1", cp)
+
+	require.NoError(t, err)
+	require.NotNil(t, s3)
+
+	data := make([]byte, 256)
+	if _, err := rand.Read(data); err != nil {
+		t.Fatal(err)
+	}
+
+	type testCase struct {
+		BlobName string
+		Meta     map[string]string
+	}
+
+	for name, tc := range map[string]testCase{
+		"file only": {
+			BlobName: "01/01.dat",
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			err := s3.Upload(context.Background(), bucketName, tc.BlobName, bytes.NewReader(data), tc.Meta)
+			require.NoError(t, err)
+
+			result, err := s3.ListObjects(context.Background(), storage.ListObjectsInput{
+				BucketName:        bucketName,
+				Prefix:            "/",
+				ContinuationToken: nil,
+			})
+
+			require.NoError(t, err)
+			require.NotNil(t, result)
+			assert.Len(t, result.Objects, 1)
+
+			result, err = s3.ListObjects(context.Background(), storage.ListObjectsInput{
+				BucketName:        bucketName,
+				Prefix:            "01/",
+				ContinuationToken: nil,
+			})
+
+			require.NoError(t, err)
+			require.NotNil(t, result)
+			assert.Len(t, result.Objects, 1)
+
+			err = s3.Delete(context.Background(), bucketName, tc.BlobName)
+			require.NoError(t, err)
+
+			result, err = s3.ListObjects(context.Background(), storage.ListObjectsInput{
+				BucketName:        bucketName,
+				Prefix:            "",
+				ContinuationToken: nil,
+			})
+
+			require.NoError(t, err)
+			require.NotNil(t, result)
+			assert.Len(t, result.Objects, 0)
+		})
+	}
 }
