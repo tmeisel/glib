@@ -14,6 +14,8 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/felixge/httpsnoop v1.0.3 // indirect
+	github.com/gorilla/handlers v1.5.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/tmeisel/glib/log v0.0.3 // indirect
 	go.uber.org/multierr v1.10.0 // indirect

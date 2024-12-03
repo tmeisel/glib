@@ -6,7 +6,10 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"time"
+
+	"github.com/gorilla/handlers"
 
 	"github.com/gorilla/mux"
 )
@@ -99,7 +102,7 @@ func (s *Server) ListenAndServe() error {
 	router := s.router
 	router.Use(s.mwf...)
 
-	s.srv.Handler = router
+	s.srv.Handler = handlers.LoggingHandler(os.Stdout, router)
 
 	return s.srv.ListenAndServe()
 }
