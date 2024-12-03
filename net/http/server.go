@@ -12,6 +12,7 @@ import (
 )
 
 type Server struct {
+	mwf    []mux.MiddlewareFunc
 	router *mux.Router
 	srv    http.Server
 }
@@ -86,8 +87,19 @@ func (s *Server) GetRouter() *mux.Router {
 	return s.router
 }
 
+type MiddlewareFunc = func(http.Handler) http.Handler
+
+func (s *Server) Use(fn ...MiddlewareFunc) {
+	for _, mwf := range fn {
+		s.mwf = append(s.mwf, mwf)
+	}
+}
+
 func (s *Server) ListenAndServe() error {
-	s.srv.Handler = s.router
+	router := s.router
+	router.Use(s.mwf...)
+
+	s.srv.Handler = router
 
 	return s.srv.ListenAndServe()
 }

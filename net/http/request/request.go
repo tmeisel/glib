@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	errPkg "github.com/tmeisel/glib/error"
@@ -76,4 +77,26 @@ func DecodeBody(r *http.Request, dest any) error {
 	}
 
 	return nil
+}
+
+const (
+	AuthHeader   = "Authorization"
+	BearerPrefix = "Bearer"
+)
+
+// GetBearerToken returns the token specified in the
+// Authorization header of the request. It MUST be prefixed
+// with the Bearer keyword. E.g. Authorization: Bearer SomeToken
+func GetBearerToken(r *http.Request) string {
+	header := r.Header.Get(AuthHeader)
+	if header == "" {
+		return ""
+	}
+
+	if !strings.HasPrefix(header, BearerPrefix) {
+		return ""
+	}
+
+	return strings.TrimSpace(strings.TrimPrefix(header, BearerPrefix))
+
 }
