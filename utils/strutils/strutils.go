@@ -71,7 +71,11 @@ func Random(length int, alphabet ...string) (string, error) {
 
 // MustRandom returns a random string. For a detailed description,
 // see Random
-func MustRandom(length int, alphabet string) string {
-	str, _ := Random(length, alphabet)
+func MustRandom(length int, alphabet ...string) string {
+	str, err := Random(length, alphabet...)
+	if err != nil {
+		panic(err)
+	}
+
 	return str
 }
