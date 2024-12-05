@@ -81,22 +81,28 @@ func DecodeBody(r *http.Request, dest any) error {
 
 const (
 	AuthHeader   = "Authorization"
+	ApiKeyHeader = "X-API-Key"
 	BearerPrefix = "Bearer"
 )
 
-// GetBearerToken returns the token specified in the
-// Authorization header of the request. It MUST be prefixed
-// with the Bearer keyword. E.g. Authorization: Bearer SomeToken
-func GetBearerToken(r *http.Request) string {
-	header := r.Header.Get(AuthHeader)
+// GetAuthToken returns the token specified in the
+// Authorization header of the request. That could be
+// the actual Authorization header, prefixed with "Bearer "
+// or the X-API-Key header
+func GetAuthToken(r *http.Request) string {
+	header := getAuthHeader(r)
 	if header == "" {
-		return ""
-	}
-
-	if !strings.HasPrefix(header, BearerPrefix) {
 		return ""
 	}
 
 	return strings.TrimSpace(strings.TrimPrefix(header, BearerPrefix))
 
+}
+
+func getAuthHeader(r *http.Request) string {
+	if header := r.Header.Get(AuthHeader); header != "" {
+		return header
+	}
+
+	return r.Header.Get(ApiKeyHeader)
 }
