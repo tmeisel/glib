@@ -32,7 +32,7 @@ func NewAuthMiddleware(identityFunc IdentityFunc) *AuthMiddleware {
 // the corresponding identity to the request context
 func (a *AuthMiddleware) IdentityMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if authToken := request.GetAuthToken(r); authToken == "" {
+		if authToken := request.GetAuthToken(r); authToken != "" {
 			identity, err := a.getIdentity(r.Context(), authToken)
 			if err != nil {
 				response.WriteError(w, err)
