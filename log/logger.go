@@ -2,6 +2,7 @@ package log
 
 import (
 	"context"
+	"strings"
 
 	"github.com/tmeisel/glib/log/fields"
 )
@@ -14,6 +15,21 @@ const (
 	LevelWarn
 	LevelError
 )
+
+func LevelFromString(s string) Level {
+	switch strings.ToLower(s) {
+	case "debug":
+		return LevelDebug
+	case "info":
+		return LevelInfo
+	case "warn":
+		return LevelWarn
+	case "error":
+		return LevelError
+	default:
+		return LevelInfo
+	}
+}
 
 type Logger interface {
 	Debug(ctx context.Context, msg string, fields ...fields.Field)
