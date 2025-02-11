@@ -98,6 +98,15 @@ func (s *Server) Use(fn ...MiddlewareFunc) {
 	}
 }
 
+func (s *Server) ListenAndServeTLS(certFile, keyFile string) error {
+	router := s.router
+	router.Use(s.mwf...)
+
+	s.srv.Handler = handlers.LoggingHandler(os.Stdout, router)
+
+	return s.srv.ListenAndServeTLS(certFile, keyFile)
+}
+
 func (s *Server) ListenAndServe() error {
 	router := s.router
 	router.Use(s.mwf...)
