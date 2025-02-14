@@ -5,28 +5,28 @@ import (
 	"time"
 )
 
-type Disconnected struct {
+type disconnected struct {
 	parent context.Context
 }
 
-var _ context.Context = Disconnected{}
+var _ context.Context = disconnected{}
 
-func FromCtx(ctx context.Context) *Disconnected {
-	return &Disconnected{parent: ctx}
+func Disconnect(ctx context.Context) context.Context {
+	return &disconnected{parent: ctx}
 }
 
-func (c Disconnected) Deadline() (deadline time.Time, ok bool) {
+func (c disconnected) Deadline() (deadline time.Time, ok bool) {
 	return
 }
 
-func (c Disconnected) Done() <-chan struct{} {
+func (c disconnected) Done() <-chan struct{} {
 	return nil
 }
 
-func (c Disconnected) Err() error {
+func (c disconnected) Err() error {
 	return nil
 }
 
-func (c Disconnected) Value(key any) any {
+func (c disconnected) Value(key any) any {
 	return c.parent.Value(key)
 }

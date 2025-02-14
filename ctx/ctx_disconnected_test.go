@@ -6,12 +6,11 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-
 	"github.com/stretchr/testify/require"
 )
 
 func TestFromCtx(t *testing.T) {
-	ctx := FromCtx(context.Background())
+	ctx := Disconnect(context.Background())
 
 	require.NotNil(t, ctx)
 	assert.Implements(t, (*context.Context)(nil), ctx)
@@ -24,7 +23,7 @@ func TestDisconnected_Value(t *testing.T) {
 	parent := context.Background()
 	parent = context.WithValue(parent, key, value)
 
-	ctx := FromCtx(parent)
+	ctx := Disconnect(parent)
 
 	returnVal := ctx.Value(key)
 
@@ -33,12 +32,11 @@ func TestDisconnected_Value(t *testing.T) {
 }
 
 func TestDisconnected_Deadline(t *testing.T) {
-	parent, cancelFn := context.WithDeadline(context.Background(), time.Now().Add(time.Microsecond))
-	defer cancelFn()
+	parent, cancelParent := context.WithDeadline(context.Background(), time.Now().Add(time.Microsecond))
+	ctx := Disconnect(parent)
 
+	cancelParent()
 	assert.Error(t, parent.Err())
-
-	ctx := FromCtx(parent)
 
 	deadline, ok := ctx.Deadline()
 	assert.Equal(t, time.Time{}, deadline)
@@ -49,7 +47,7 @@ func TestDisconnected_Err(t *testing.T) {
 	parent, cancelFn := context.WithCancel(context.Background())
 	cancelFn()
 
-	ctx := FromCtx(parent)
+	ctx := Disconnect(parent)
 
 	assert.Error(t, parent.Err())
 	assert.NoError(t, ctx.Err())
@@ -58,7 +56,7 @@ func TestDisconnected_Err(t *testing.T) {
 func TestDisconnected_Done(t *testing.T) {
 	parent, cancelFn := context.WithCancel(context.Background())
 
-	ctx := FromCtx(parent)
+	ctx := Disconnect(parent)
 	cancelFn()
 
 	select {
