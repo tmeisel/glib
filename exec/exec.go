@@ -12,7 +12,7 @@ import (
 
 func SigtermHandler(ctx context.Context, cancelFn context.CancelFunc) {
 	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL, syscall.SIGQUIT)
 
 	sig := <-sigs
 
