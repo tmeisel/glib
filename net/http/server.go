@@ -10,11 +10,13 @@ import (
 	"time"
 
 	"github.com/gorilla/handlers"
-
 	"github.com/gorilla/mux"
 )
 
 type Server struct {
+	certFile string
+	keyFile  string
+
 	mwf    []mux.MiddlewareFunc
 	router *mux.Router
 	srv    http.Server
@@ -26,6 +28,8 @@ type ServerConfig struct {
 	ReadTimeout  *time.Duration `envconfig:"READ_TIMEOUT" default:"20s"`
 	WriteTimeout *time.Duration `envconfig:"WRITE_TIMEOUT" default:"5s"`
 	IdleTimeout  *time.Duration `envconfig:"IDLE_TIMEOUT" default:"10s"`
+	CertFile     string         `envconfig:"CERT_FILE"`
+	KeyFile      string         `envconfig:"KEY_FILE"`
 }
 
 func NewServer(ctx context.Context, addr string, port uint) *Server {
@@ -55,7 +59,16 @@ func NewServerFromConf(ctx context.Context, conf ServerConfig) *Server {
 		s.SetIdleTimeout(*conf.IdleTimeout)
 	}
 
+	if conf.CertFile != "" && conf.KeyFile != "" {
+		s.WithTLS(conf.CertFile, conf.KeyFile)
+	}
+
 	return s
+}
+
+func (s *Server) WithTLS(certFile, keyFile string) {
+	s.certFile = certFile
+	s.keyFile = keyFile
 }
 
 func (s *Server) SetReadTimeout(t time.Duration) {
@@ -90,6 +103,10 @@ func (s *Server) GetRouter() *mux.Router {
 	return s.router
 }
 
+func (s *Server) Shutdown(ctx context.Context) error {
+	return s.srv.Shutdown(ctx)
+}
+
 type MiddlewareFunc = func(http.Handler) http.Handler
 
 func (s *Server) Use(fn ...MiddlewareFunc) {
@@ -98,20 +115,15 @@ func (s *Server) Use(fn ...MiddlewareFunc) {
 	}
 }
 
-func (s *Server) ListenAndServeTLS(certFile, keyFile string) error {
-	router := s.router
-	router.Use(s.mwf...)
-
-	s.srv.Handler = handlers.LoggingHandler(os.Stdout, router)
-
-	return s.srv.ListenAndServeTLS(certFile, keyFile)
-}
-
 func (s *Server) ListenAndServe() error {
 	router := s.router
 	router.Use(s.mwf...)
 
 	s.srv.Handler = handlers.LoggingHandler(os.Stdout, router)
+
+	if s.certFile != "" && s.keyFile != "" {
+		return s.srv.ListenAndServeTLS(s.certFile, s.keyFile)
+	}
 
 	return s.srv.ListenAndServe()
 }
