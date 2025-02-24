@@ -16,7 +16,9 @@ func Ptr(s string) *string {
 func SubString(s string, pos, length int) string {
 	runes := []rune(s)
 
-	if pos > len(runes) {
+	total := len(runes)
+
+	if pos > total {
 		return ""
 	}
 
@@ -24,9 +26,16 @@ func SubString(s string, pos, length int) string {
 		return string(runes[pos:])
 	}
 
+	if length < 0 {
+		pos = total + length
+		length = pos + (length * -1)
+
+		return string(runes[pos:length])
+	}
+
 	l := pos + length
-	if l > len(runes) {
-		l = len(runes)
+	if l > total {
+		l = total
 	}
 
 	return string(runes[pos:l])

@@ -42,6 +42,11 @@ func TestSubString(t *testing.T) {
 			Len:    0,
 			Substr: "World",
 		},
+		"Negative length": {
+			Pos:    0,
+			Len:    -5,
+			Substr: "World",
+		},
 	} {
 		t.Run(name, func(t *testing.T) {
 			assert.Equal(t, tc.Substr, SubString(input, tc.Pos, tc.Len))
