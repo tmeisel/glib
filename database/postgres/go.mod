@@ -7,12 +7,13 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.18.1
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/pkg/errors v0.9.1
-	github.com/stretchr/testify v1.9.0
-	github.com/tmeisel/glib/database v0.0.3
-	github.com/tmeisel/glib/error v0.0.6
+	github.com/stretchr/testify v1.10.0
+	github.com/tmeisel/glib/ctx v0.0.4
+	github.com/tmeisel/glib/database v0.0.4
+	github.com/tmeisel/glib/error v0.0.10
 	github.com/tmeisel/glib/exec v0.0.1
+	github.com/tmeisel/glib/log v0.0.3
 	github.com/tmeisel/glib/testing v0.0.2
-	gotest.tools v2.2.0+incompatible
 )
 
 require (
@@ -24,7 +25,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -40,9 +40,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/tmeisel/glib/ctx v0.0.4 // indirect
-	github.com/tmeisel/glib/log v0.0.3 // indirect
-	github.com/tmeisel/glib/utils v0.0.1 // indirect
+	github.com/tmeisel/glib/utils v0.0.6 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
