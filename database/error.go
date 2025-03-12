@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	ErrNoRows = errorPkg.New(errorPkg.CodeNotFound, errorPkg.CodeNotFound.String(), nil)
+	ErrInvalidLogin = errorPkg.New(errorPkg.CodeInvalidCredentials, errorPkg.CodeInvalidCredentials.String(), nil)
+	ErrNoRows       = errorPkg.New(errorPkg.CodeNotFound, errorPkg.CodeNotFound.String(), nil)
 )
 
 func NewError(err error) *errorPkg.Error {
