@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -24,6 +25,13 @@ func ProcessError(err error) *errPkg.Error {
 		return database.ErrNoRows
 	}
 
+	var pgErr *pgconn.ConnectError
+	if errors.As(err, &pgErr) {
+		if strings.Contains(pgErr.Error(), CodeInvalidLogin) {
+			return database.ErrInvalidLogin
+		}
+	}
+
 	if pgconnErr, ok := err.(*pgconn.PgError); ok {
 		column := pgconnErr.ColumnName
 		if column == "" {
@@ -33,8 +41,6 @@ func ProcessError(err error) *errPkg.Error {
 		switch pgconnErr.Code {
 		case CodeDuplicateKey:
 			return database.NewDuplicateKeyError(pgconnErr, &column)
-		case CodeInvalidLogin:
-			return database.ErrInvalidLogin
 		}
 	}
 

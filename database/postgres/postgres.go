@@ -39,6 +39,10 @@ func Init(ctx context.Context, conf Config, retryConf *RetryConfig) (pool *pgxpo
 
 		var pgErr *pgconn.ConnectError
 		if errors.As(err, &pgErr) {
+			if errPkg.Is(ProcessError(err), errPkg.CodeInvalidCredentials) {
+				return err
+			}
+
 			log(ctx, "failed to connect to postgres", fields.Bool("retry", true), fields.String("err", err.Error()))
 			return backoff.RetryableError(pgErr)
 		}
