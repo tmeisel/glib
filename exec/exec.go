@@ -10,7 +10,9 @@ import (
 	ctxPkg "github.com/tmeisel/glib/ctx"
 )
 
-func SigHandler(ctx context.Context, cancelFn context.CancelFunc) {
+// SigHandler waits for syscall.SIG* and calls cancelFn, if received. If finally is
+// a function, it will be called last before it returns. Any error
+func SigHandler(ctx context.Context, cancelFn context.CancelFunc, finally func() error) error {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL, syscall.SIGQUIT)
 
@@ -21,6 +23,12 @@ func SigHandler(ctx context.Context, cancelFn context.CancelFunc) {
 	}
 
 	cancelFn()
+
+	if finally == nil {
+		return nil
+	}
+
+	return finally()
 }
 
 func Deferred(fn func() error) {
