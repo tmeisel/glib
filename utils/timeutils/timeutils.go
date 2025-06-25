@@ -10,6 +10,42 @@ import (
 	"github.com/tmeisel/glib/utils/strutils"
 )
 
+// ParseDate parses a string like 20060102 and returns it as int(2006), time.January, int(2).
+// In case of an error, the returned date is set to January 1st, 0001 (aka the zero time's date)
+func ParseDate(date string) (year int, month time.Month, day int, err error) {
+	if len(date) != 8 {
+		return 1, time.January, 1, errPkg.NewUserMsg(nil, "invalid format. expecting YYYYMMDD")
+	}
+
+	yearStr, monthStr, dayStr :=
+		strutils.SubString(date, 0, 4),
+		strutils.SubString(date, 4, 2),
+		strutils.SubString(date, 6, 2)
+
+	year, err = strconv.Atoi(yearStr)
+	if err != nil {
+		return 1, time.January, 1, err
+	}
+
+	var monthInt int
+	monthInt, err = strconv.Atoi(monthStr)
+	if err != nil {
+		return 1, time.January, 1, err
+	}
+
+	month = time.Month(monthInt)
+	if time.January > month || time.December < month {
+		return 1, time.January, 1, errPkg.NewUserMsg(nil, "invalid month")
+	}
+
+	day, err = strconv.Atoi(dayStr)
+	if err != nil {
+		return 1, time.January, 1, err
+	}
+
+	return year, time.Month(monthInt), day, nil
+}
+
 // AddDate takes a duration as a string in EITHER
 // the form "3y" (years), "3M" (months) or "3d" (days)
 // and adds it to the given time.Time to. Any other

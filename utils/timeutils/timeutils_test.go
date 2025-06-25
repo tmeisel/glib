@@ -45,3 +45,50 @@ func TestAddDate(t *testing.T) {
 		})
 	}
 }
+
+func TestParseDate(t *testing.T) {
+	type testCase struct {
+		Input         string
+		ExpectedYear  int
+		ExpectedMonth time.Month
+		ExpectedDay   int
+		ExpectError   bool
+	}
+
+	for name, tc := range map[string]testCase{
+		"19831219": {
+			Input:         "19831219",
+			ExpectedYear:  1983,
+			ExpectedMonth: time.Month(12),
+			ExpectedDay:   19,
+			ExpectError:   false,
+		},
+		"too short": {
+			Input:       "2012051",
+			ExpectError: true,
+		},
+		"wrong month": {
+			Input:       "20121301",
+			ExpectError: true,
+		},
+	} {
+		t.Run(name, func(t *testing.T) {
+			y, m, d, err := ParseDate(tc.Input)
+			if tc.ExpectError {
+				require.Error(t, err)
+
+				assert.Equal(t, 1, y)
+				assert.Equal(t, time.January, m)
+				assert.Equal(t, 1, d)
+
+				return
+			}
+
+			require.NoError(t, err)
+
+			assert.Equal(t, tc.ExpectedYear, y)
+			assert.Equal(t, tc.ExpectedMonth, m)
+			assert.Equal(t, tc.ExpectedDay, d)
+		})
+	}
+}
