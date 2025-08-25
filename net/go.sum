@@ -18,8 +18,8 @@ github.com/tmeisel/glib/database v0.0.3 h1:TvWqdsQzQMIIE/DsI31+jGJJE/Kc5x0eKCMkF
 github.com/tmeisel/glib/database v0.0.3/go.mod h1:/S60X+jSZwRcZT/gywRsCJ8u0nT6L+27qCY/dxVLsrk=
 github.com/tmeisel/glib/error v0.0.6 h1:0sEmlhf/68GpX8AbVKP2Ab1QM4G1BgQlYBkt57K4T2Y=
 github.com/tmeisel/glib/error v0.0.6/go.mod h1:vqEgEXluH8R2KHKntCPx0u9UexMinWUxlRCn+JmsykM=
-github.com/tmeisel/glib/log v0.0.3 h1:oOVdPBJ+rsjAVXMEcgPXmwvMBngehdcbbOlrcVe7ibY=
-github.com/tmeisel/glib/log v0.0.3/go.mod h1:/D7vA5GpHqDz6J0ukF/mq06Fv9SfSTpFw+8n6kylv9M=
+github.com/tmeisel/glib/log v0.0.6 h1:ihkrXux0bkhp/5phjXIyAG8M3lfvwPfVzffIf7oe1YA=
+github.com/tmeisel/glib/log v0.0.6/go.mod h1:JYTSxJxqG4HXDpmEk0d0TcSJpl5InIiid40OfIkVvDM=
 github.com/tmeisel/glib/utils v0.0.2 h1:y+ZmD+FjCse5LLbRTPU4OiZiVoPSbHvO2DNhVMeiXQ8=
 github.com/tmeisel/glib/utils v0.0.2/go.mod h1:6Y6LS/sXZILJeyoXDFK3GRVDb3rVZPdQVLS9Xxcu3X0=
 go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=

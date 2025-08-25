@@ -17,6 +17,9 @@ type Server struct {
 	certFile string
 	keyFile  string
 
+	withCORS    bool
+	corsOptions []handlers.CORSOption
+
 	mwf    []mux.MiddlewareFunc
 	router *mux.Router
 	srv    http.Server
@@ -30,6 +33,9 @@ type ServerConfig struct {
 	IdleTimeout  *time.Duration `envconfig:"IDLE_TIMEOUT" default:"10s"`
 	CertFile     string         `envconfig:"CERT_FILE"`
 	KeyFile      string         `envconfig:"KEY_FILE"`
+
+	WithCORS    bool                  `envconfig:"WITH_CORS" default:"false"`
+	CORSOptions []handlers.CORSOption `envconfig:"CORS_OPTIONS" default:"false"`
 }
 
 func NewServer(ctx context.Context, addr string, port uint) *Server {
@@ -62,6 +68,9 @@ func NewServerFromConf(ctx context.Context, conf ServerConfig) *Server {
 	if conf.CertFile != "" && conf.KeyFile != "" {
 		s.WithTLS(conf.CertFile, conf.KeyFile)
 	}
+
+	s.withCORS = conf.WithCORS
+	s.corsOptions = conf.CORSOptions
 
 	return s
 }
@@ -119,7 +128,12 @@ func (s *Server) ListenAndServe() error {
 	router := s.router
 	router.Use(s.mwf...)
 
-	s.srv.Handler = handlers.LoggingHandler(os.Stdout, router)
+	var handler http.Handler = router
+	if s.withCORS {
+		handler = handlers.CORS(s.corsOptions...)(router)
+	}
+
+	s.srv.Handler = handlers.LoggingHandler(os.Stdout, handler)
 
 	if s.certFile != "" && s.keyFile != "" {
 		return s.srv.ListenAndServeTLS(s.certFile, s.keyFile)

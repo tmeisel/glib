@@ -1,6 +1,7 @@
 package response
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -10,6 +11,7 @@ import (
 	"github.com/tmeisel/glib/net/pagination"
 
 	errPkg "github.com/tmeisel/glib/error"
+	logPkg "github.com/tmeisel/glib/log"
 )
 
 type response struct {
@@ -22,6 +24,14 @@ type response struct {
 type Error struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
+}
+
+var (
+	logger logPkg.Logger
+)
+
+func SetLogger(l logPkg.Logger) {
+	logger = l
 }
 
 func WriteError(w http.ResponseWriter, err error) {
@@ -42,6 +52,10 @@ func WriteErrorStatus(w http.ResponseWriter, status int, err error) {
 	// from e.g. http status 500 => code 50000
 	if code < 1000 {
 		code = code * 100
+	}
+
+	if logger != nil {
+		logger.Debugf(context.Background(), "[%d] %v", code, err)
 	}
 
 	writeJson(w, status, response{Success: false, Error: &Error{
