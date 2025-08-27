@@ -1,14 +1,34 @@
 package strutils
 
 import (
-	"crypto/rand"
+	cryptoRand "crypto/rand"
 	"math/big"
+	mathRand "math/rand"
+	"slices"
 	"strings"
 )
 
 // Ptr returns a pointer to s
 func Ptr(s string) *string {
 	return &s
+}
+
+// InSlice returns true, if the given string needle is contained in the
+// slice of strings haystack
+func InSlice(needle string, haystack []string) bool {
+	return slices.Contains(haystack, needle)
+}
+
+// InSliceIgnoreCase returns true, if the given string needle is in the
+// slice of strings haystack, ignoring the case of the comparable
+func InSliceIgnoreCase(needle string, haystack []string) bool {
+	for _, elem := range haystack {
+		if strings.ToLower(needle) == strings.ToLower(elem) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // SubString returns a portion of a given string. If length is 0,
@@ -41,6 +61,17 @@ func SubString(s string, pos, length int) string {
 	return string(runes[pos:l])
 }
 
+// Shuffle shuffles the given string s' characters
+func Shuffle(s string) string {
+	output := make([]byte, len(s))
+	perm := mathRand.Perm(len(s) - 1)
+	for idx, rnd := range perm {
+		output[idx] = s[rnd]
+	}
+
+	return string(output)
+}
+
 const (
 	// AlphabetUCChars Upper case chars
 	AlphabetUCChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -60,22 +91,22 @@ const (
 	AlphabetReadable = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKKLMNPQRSTUVWXYZ2345689"
 )
 
-// Random returns a random string generated using crypto/rand.
+// Random returns a random string generated using crypto/cryptoRand.
 // The alphabet can be one or more strings, including the ones
 // provided by this pkg like AlphabetNumbers.
 func Random(length int, alphabet ...string) (string, error) {
 	chars := strings.Join(alphabet, "")
-	output := make([]byte, length)
+	outputChars := make([]byte, length)
 	for i := 0; i < length; i++ {
-		num, err := rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
+		num, err := cryptoRand.Int(cryptoRand.Reader, big.NewInt(int64(len(chars))))
 		if err != nil {
 			return "", err
 		}
 
-		output[i] = chars[num.Int64()]
+		outputChars[i] = chars[num.Int64()]
 	}
 
-	return string(output), nil
+	return Shuffle(string(outputChars)), nil
 }
 
 // MustRandom returns a random string. For a detailed description,
