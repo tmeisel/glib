@@ -54,8 +54,8 @@ func WriteErrorStatus(w http.ResponseWriter, status int, err error) {
 		code = code * 100
 	}
 
-	if logger != nil {
-		logger.Debugf(context.Background(), "[%d] %v", code, err)
+	if logger != nil && status >= http.StatusInternalServerError {
+		logger.Errorf(context.Background(), "[%d] %v", code, err)
 	}
 
 	writeJson(w, status, response{Success: false, Error: &Error{
