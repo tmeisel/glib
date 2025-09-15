@@ -129,8 +129,14 @@ func (s *Server) ListenAndServe() error {
 	router.Use(s.mwf...)
 
 	var handler http.Handler = router
+
 	if s.withCORS {
-		handler = handlers.CORS(s.corsOptions...)(router)
+		var corsOptions = make([]handlers.CORSOption, 0)
+		if s.corsOptions != nil {
+			corsOptions = append(corsOptions, s.corsOptions...)
+		}
+
+		handler = handlers.CORS(corsOptions...)(router)
 	}
 
 	s.srv.Handler = handlers.LoggingHandler(os.Stdout, handler)
