@@ -11,6 +11,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 type Server struct {
@@ -18,7 +19,7 @@ type Server struct {
 	keyFile  string
 
 	withCORS    bool
-	corsOptions []handlers.CORSOption
+	corsOptions *cors.Options
 
 	mwf    []mux.MiddlewareFunc
 	router *mux.Router
@@ -34,8 +35,14 @@ type ServerConfig struct {
 	CertFile     string         `envconfig:"CERT_FILE"`
 	KeyFile      string         `envconfig:"KEY_FILE"`
 
-	WithCORS    bool                  `envconfig:"WITH_CORS" default:"false"`
-	CORSOptions []handlers.CORSOption `envconfig:"CORS_OPTIONS" default:"false"`
+	// WithCORS cannot be applied via envconfig. It's typically
+	// set by the implementing package, depending on the purpose
+	// of the application
+	WithCORS bool
+
+	// CORSOptions cannot be applied via envconfig.
+	// The struct is implemented in github.com/rs/cors
+	CORSOptions *cors.Options
 }
 
 func NewServer(ctx context.Context, addr string, port uint) *Server {
@@ -70,7 +77,9 @@ func NewServerFromConf(ctx context.Context, conf ServerConfig) *Server {
 	}
 
 	s.withCORS = conf.WithCORS
-	s.corsOptions = conf.CORSOptions
+	if conf.CORSOptions != nil {
+		s.corsOptions = conf.CORSOptions
+	}
 
 	return s
 }
@@ -128,22 +137,24 @@ func (s *Server) ListenAndServe() error {
 	router := s.router
 	router.Use(s.mwf...)
 
-	var handler http.Handler = router
-
-	if s.withCORS {
-		var corsOptions = make([]handlers.CORSOption, 0)
-		if s.corsOptions != nil {
-			corsOptions = append(corsOptions, s.corsOptions...)
-		}
-
-		handler = handlers.CORS(corsOptions...)(router)
-	}
-
-	s.srv.Handler = handlers.LoggingHandler(os.Stdout, handler)
+	s.srv.Handler = handlers.LoggingHandler(os.Stdout, s.applyCORS(router))
 
 	if s.certFile != "" && s.keyFile != "" {
 		return s.srv.ListenAndServeTLS(s.certFile, s.keyFile)
 	}
 
 	return s.srv.ListenAndServe()
+}
+
+func (s *Server) applyCORS(handler http.Handler) http.Handler {
+	if !s.withCORS {
+		return handler
+	}
+
+	if s.corsOptions == nil {
+		// use defaults
+		return cors.Default().Handler(handler)
+	}
+
+	return cors.New(*s.corsOptions).Handler(handler)
 }
