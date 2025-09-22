@@ -60,6 +60,14 @@ type Logger interface {
 	// to args
 	Errorf(ctx context.Context, format string, args ...interface{})
 
+	// Printf is a generic formatted print compatible with fmt.Printf.
+	// It should be avoided but makes it compatible with other libraries
+	Printf(format string, args ...interface{})
+
+	// Write is a generic writer. It should be avoided but makes it compatible
+	// with other libraries
+	Write(p []byte) (bytesWritten int, err error)
+
 	// SetLevel changes the loglevel to the given Level
 	SetLevel(level Level) error
 

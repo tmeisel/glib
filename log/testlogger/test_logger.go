@@ -2,6 +2,7 @@ package testlogger
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/tmeisel/glib/log"
 	"github.com/tmeisel/glib/log/common"
@@ -28,6 +29,16 @@ func New(logLevel log.Level) *TestLogger {
 
 func (t *TestLogger) GetEntries() []logEntry {
 	return t.entries
+}
+
+func (t *TestLogger) Printf(format string, args ...interface{}) {
+	_, _ = fmt.Fprintf(t, format, args...)
+}
+
+func (t *TestLogger) Write(b []byte) (int, error) {
+	t.Info(context.Background(), string(b))
+
+	return len(b), nil
 }
 
 func (t *TestLogger) Debug(_ context.Context, msg string, fields ...fields.Field) {

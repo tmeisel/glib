@@ -2,6 +2,7 @@ package zap
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/tmeisel/glib/log/common"
@@ -53,6 +54,16 @@ func (z *Zap) SetLevel(level logPkg.Level) error {
 	z.atom.SetLevel(zapcore.Level(level))
 
 	return nil
+}
+
+func (z *Zap) Printf(format string, args ...interface{}) {
+	_, _ = fmt.Fprintf(z, format, args...)
+}
+
+func (z *Zap) Write(b []byte) (int, error) {
+	z.log(context.Background(), zap.InfoLevel, string(b))
+
+	return len(b), nil
 }
 
 func (z *Zap) Debug(ctx context.Context, msg string, fields ...fields.Field) {
