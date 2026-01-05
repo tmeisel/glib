@@ -12,13 +12,17 @@ import (
 	"github.com/golang-migrate/migrate/v4/source/httpfs"
 )
 
+const (
+	sourceHttpFS = "httpfs"
+)
+
 func Migrate(_ context.Context, migrations embed.FS, migrationsPath string, dsn string) error {
 	source, err := httpfs.New(http.FS(migrations), migrationsPath)
 	if err != nil {
 		return fmt.Errorf("failed to load migrations: %w", err)
 	}
 
-	m, err := migrate.NewWithSourceInstance("httpfs", source, dsn)
+	m, err := migrate.NewWithSourceInstance(sourceHttpFS, source, dsn)
 	if err != nil {
 		return fmt.Errorf("failed to create migrate instance: %w", err)
 	}

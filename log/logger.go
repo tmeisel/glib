@@ -16,22 +16,37 @@ const (
 	LevelError
 )
 
+func (l Level) String() string {
+	switch l {
+	case LevelDebug:
+		return levelStrDebug
+	case LevelWarn:
+		return levelStrWarn
+	case LevelError:
+		return levelStrError
+	case LevelInfo:
+		fallthrough
+	default:
+		return levelStrInfo
+	}
+}
+
 const (
-	Debug = "debug"
-	Info  = "info"
-	Warn  = "warn"
-	Error = "error"
+	levelStrDebug = "debug"
+	levelStrInfo  = "info"
+	levelStrWarn  = "warn"
+	levelStrError = "error"
 )
 
 func LevelFromString(s string) Level {
 	switch strings.ToLower(s) {
-	case Debug:
+	case levelStrDebug:
 		return LevelDebug
-	case Info:
+	case levelStrInfo:
 		return LevelInfo
-	case Warn:
+	case levelStrWarn:
 		return LevelWarn
-	case Error:
+	case levelStrError:
 		return LevelError
 	default:
 		return LevelInfo

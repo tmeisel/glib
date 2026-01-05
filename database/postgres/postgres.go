@@ -3,6 +3,9 @@ package postgres
 import (
 	"context"
 	"errors"
+	"fmt"
+	stdLibLog "log"
+	"strings"
 
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -26,7 +29,7 @@ func Init(ctx context.Context, conf Config, retryConf *RetryConfig) (pool *pgxpo
 		return nil, errPkg.NewInternal(err)
 	}
 
-	var log = discardLogMsg
+	var log = defaultLog
 	if logger := ctxPkg.GetLogger(ctx); logger != nil {
 		log = logger.Error
 	}
@@ -55,8 +58,13 @@ func Init(ctx context.Context, conf Config, retryConf *RetryConfig) (pool *pgxpo
 	return
 }
 
-// discardLogMsg drops any incoming method. It's a convenient function in case
-// the given ctx did not contain a logger
-func discardLogMsg(_ context.Context, _ string, _ ...fields.Field) {
-	// do nothing
+// defaultLog writes the given msg using log.Printf (incl. fields.Field f)
+func defaultLog(_ context.Context, msg string, f ...fields.Field) {
+	var logFields []string
+	for _, field := range f {
+		logFields = append(logFields, fmt.Sprintf("%s=%v", field.Key, field.Interface))
+	}
+
+	// stdLibLog is the standard library log
+	stdLibLog.Printf("%s (fields: %s)", msg, strings.Join(logFields, ","))
 }

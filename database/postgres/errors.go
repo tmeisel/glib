@@ -14,6 +14,7 @@ import (
 const (
 	CodeDuplicateKey = "23505"
 	CodeInvalidLogin = "28P01"
+	CodeNoPartition  = "23514"
 )
 
 func ProcessError(err error) *errPkg.Error {
@@ -41,6 +42,8 @@ func ProcessError(err error) *errPkg.Error {
 		switch pgconnErr.Code {
 		case CodeDuplicateKey:
 			return database.NewDuplicateKeyError(pgconnErr, &column)
+		case CodeNoPartition:
+			return errPkg.New(errPkg.CodeInternal, "no matching partition found", pgconnErr)
 		}
 	}
 
