@@ -8,12 +8,12 @@ import (
 )
 
 type Config struct {
-	Host     string            `envconfig:"HOST" default:"localhost"`
-	Port     uint              `envconfig:"PORT" default:"5432"`
-	Database string            `envconfig:"DATABASE" default:"postgres"`
-	User     string            `envconfig:"USER" default:"postgres"`
-	Password Password          `envconfig:"PASSWORD" default:"postgres"`
-	Params   map[string]string `envconfig:"PARAMS" default:"sslmode:require"`
+	Host     string            `envconfig:"HOST" default:"localhost" desc:"Database host"`
+	Port     uint              `envconfig:"PORT" default:"5432" desc:"Database port"`
+	Database string            `envconfig:"DATABASE" default:"postgres" desc:"Database name"`
+	User     string            `envconfig:"USER" default:"postgres" desc:"Database username"`
+	Password Password          `envconfig:"PASSWORD" default:"postgres" desc:"Database password"`
+	Params   map[string]string `envconfig:"PARAMS" default:"sslmode:require" desc:"Database parameters (as key:value secondKey:secondValue)"`
 }
 
 func (c Config) DSN() string {
