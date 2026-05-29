@@ -14,6 +14,7 @@ require (
 	github.com/tmeisel/glib/exec v0.0.1
 	github.com/tmeisel/glib/log v0.0.3
 	github.com/tmeisel/glib/testing v0.0.2
+	github.com/tmeisel/glib/utils v0.0.6
 )
 
 require (
@@ -40,7 +41,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/tmeisel/glib/utils v0.0.6 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
