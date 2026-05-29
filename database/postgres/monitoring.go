@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+
 	ctxPkg "github.com/tmeisel/glib/ctx"
 	"github.com/tmeisel/glib/utils/ptr"
 )
@@ -19,16 +20,15 @@ const (
 	minMonitoringInterval     = time.Second * 5
 )
 
-func NewMonitoring(pool *pgxpool.Pool, statusChan chan error) *Monitoring {
+func NewMonitoring(pool *pgxpool.Pool) *Monitoring {
 	return &Monitoring{
-		pool:       pool,
-		statusChan: statusChan,
+		pool: pool,
 	}
 }
 
-// Monitor starts health checking the connection with IdAM.
+// Monitor starts health checking the connection with postgres.
 // It keeps running until the given [context.Context] expires
-func (m Monitoring) Monitor(ctx context.Context, interval *time.Duration) {
+func (m Monitoring) Monitor(ctx context.Context, statusChan chan error, interval *time.Duration) {
 	logger := ctxPkg.GetLogger(ctx)
 
 	if interval == nil {
@@ -46,7 +46,7 @@ func (m Monitoring) Monitor(ctx context.Context, interval *time.Duration) {
 	for {
 		select {
 		case <-checkChan:
-			go m.checkHealth(ctx)
+			go m.checkHealth(ctx, statusChan)
 		case <-ctx.Done():
 			logger.Info(ctx, "stopping postgres monitoring")
 			return
@@ -54,7 +54,7 @@ func (m Monitoring) Monitor(ctx context.Context, interval *time.Duration) {
 	}
 }
 
-func (m Monitoring) checkHealth(ctx context.Context) {
+func (m Monitoring) checkHealth(ctx context.Context, statusChan chan error) {
 	logger := ctxPkg.GetLogger(ctx)
 
 	logger.Debug(ctx, "checking postgres health")
@@ -64,12 +64,12 @@ func (m Monitoring) checkHealth(ctx context.Context) {
 
 	if err := m.pool.Ping(ctx); err != nil {
 		logger.Errorf(ctx, "postgres health check failed: %s", err)
-		m.statusChan <- err
+		statusChan <- err
 
 		return
 	}
 
 	logger.Debug(ctx, "postgres health check succeeded")
 
-	m.statusChan <- nil
+	statusChan <- nil
 }
