@@ -56,7 +56,7 @@ func FromRequest(r *http.Request) (*Request, error) {
 			return nil, ErrInvalidOffset
 		}
 
-		return lo.toRequest()
+		return lo.ToRequest()
 	}
 
 	return nil, nil
@@ -90,7 +90,8 @@ type LimitAndOffset struct {
 	Offset uint64 `json:"offset"`
 }
 
-func (lo LimitAndOffset) toRequest() (*Request, error) {
+// ToRequest encodes LimitAndOffset to be used as a request
+func (lo LimitAndOffset) ToRequest() (*Request, error) {
 	js, err := json.Marshal(lo)
 	if err != nil {
 		return nil, err
