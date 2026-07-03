@@ -16,6 +16,11 @@ import (
 	"github.com/tmeisel/glib/log/fields"
 )
 
+// Init tries to establish a connection with the database specified
+// via conf Config. If retryConc is not nil, it will ping the database
+// and retry, if the ping returns a retryable error. Invalid credentials
+// are not a retryable error. For retryConf, the DefaultRetryConfig
+// can be used.
 func Init(ctx context.Context, conf Config, retryConf *RetryConfig) (pool *pgxpool.Pool, err error) {
 	if retryConf == nil {
 		return pgxpool.New(ctx, conf.DSN())

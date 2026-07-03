@@ -3,6 +3,7 @@ package postgres
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/tmeisel/glib/exec/backoff"
 )
@@ -62,4 +63,12 @@ func (p Password) MarshalJSON() ([]byte, error) {
 type RetryConfig struct {
 	Backoff *backoff.Backoff
 	Options []backoff.OptionFn
+}
+
+var DefaultRetryConfig = &RetryConfig{
+	Backoff: backoff.NewFibonacci(time.Millisecond * 100),
+	Options: []backoff.OptionFn{
+		backoff.WithCap(time.Second * 3),
+		backoff.WithJitter(time.Millisecond * 20),
+	},
 }
