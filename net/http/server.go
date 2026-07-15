@@ -113,8 +113,12 @@ func (s *Server) AddRoute(method, path string, handler http.HandlerFunc) {
 	s.router.HandleFunc(path, handler).Methods(method)
 }
 
-func (s *Server) PathHandler(pfx string, handler http.HandlerFunc) {
-	s.router.PathPrefix(pfx).HandlerFunc(handler)
+func (s *Server) PathHandler(pfx string, handler http.Handler) {
+	s.router.PathPrefix(pfx).Handler(handler)
+}
+
+func (s *Server) PathHandlerFunc(pfx string, handlerFn http.HandlerFunc) {
+	s.router.PathPrefix(pfx).HandlerFunc(handlerFn)
 }
 
 func (s *Server) GetRouter() *mux.Router {

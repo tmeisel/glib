@@ -101,3 +101,72 @@ func TestServer_WithCORS(t *testing.T) {
 
 	require.NoError(t, serverError)
 }
+
+type ph struct{}
+
+func (p *ph) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+}
+
+func TestServer_PathHandler(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	const testPort = port + 2
+	s := NewServerFromConf(ctx, ServerConfig{
+		ListenAddr: addr,
+		ListenPort: testPort,
+	})
+
+	const path = "http-handler-path"
+
+	s.PathHandler(fmt.Sprintf("/%s", path), &ph{})
+
+	var serverError error
+	go func() {
+		require.NoError(t, s.ListenAndServe())
+	}()
+
+	// wait for server to be ready
+	time.Sleep(100 * time.Millisecond)
+
+	resp, err := http.Get(fmt.Sprintf("http://%s:%d/%s", addr, testPort, path))
+
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+
+	cancel()
+
+	require.NoError(t, serverError)
+}
+
+func TestServer_PathHandlerFunc(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	const testPort = port + 3
+	s := NewServerFromConf(ctx, ServerConfig{
+		ListenAddr: addr,
+		ListenPort: testPort,
+	})
+
+	const path = "http-handler-func-path"
+	s.PathHandlerFunc(fmt.Sprintf("/%s", path), func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	var serverError error
+	go func() {
+		require.NoError(t, s.ListenAndServe())
+	}()
+
+	// wait for server to be ready
+	time.Sleep(100 * time.Millisecond)
+
+	resp, err := http.Get(fmt.Sprintf("http://%s:%d/%s", addr, testPort, path))
+
+	require.NoError(t, err)
+	require.Equal(t, http.StatusOK, resp.StatusCode)
+
+	cancel()
+
+	require.NoError(t, serverError)
+}
