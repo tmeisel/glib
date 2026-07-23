@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strconv"
+	"testing"
 	"time"
 
 	ctxPkg "github.com/tmeisel/glib/ctx"
@@ -39,6 +40,22 @@ func New(writer io.Writer, production bool, level logPkg.Level) *Writer {
 // NewStdWriter returns a Writer that uses io.Stdout as destination
 func NewStdWriter(production bool, level logPkg.Level) *Writer {
 	return New(os.Stdout, production, level)
+}
+
+// NewTestingTWriter returns a Writer that uses T.Log
+func NewTestingTWriter(t *testing.T, production bool, level logPkg.Level) *Writer {
+	ttw := &testingTWriter{t: t}
+	return New(ttw, production, level)
+}
+
+type testingTWriter struct {
+	t *testing.T
+}
+
+func (tw testingTWriter) Write(b []byte) (n int, err error) {
+	tw.t.Log(string(b))
+
+	return len(b), nil
 }
 
 func (w *Writer) Debug(ctx context.Context, msg string, fields ...fields.Field) {

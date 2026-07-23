@@ -35,6 +35,14 @@ func TestNewStdWriter(t *testing.T) {
 	assert.Equal(t, os.Stdout, log.writer)
 }
 
+func TestNewTestingTWriter(t *testing.T) {
+	log = NewTestingTWriter(t, false, logPkg.LevelDebug)
+	assert.Equal(t, logPkg.LevelDebug, log.level)
+	assert.Equal(t, false, log.production)
+
+	log.Info(context.Background(), "test")
+}
+
 func TestWriter_Debug(t *testing.T) {
 	buf := new(bytes.Buffer)
 	log = New(buf, false, logPkg.LevelDebug)
