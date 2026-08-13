@@ -23,7 +23,16 @@ import (
 // can be used.
 func Init(ctx context.Context, conf Config, retryConf *RetryConfig) (pool *pgxpool.Pool, err error) {
 	if retryConf == nil {
-		return pgxpool.New(ctx, conf.DSN())
+		pool, err = pgxpool.New(ctx, conf.DSN())
+		if err != nil {
+			return nil, err
+		}
+
+		if err := pool.Ping(ctx); err != nil {
+			return nil, err
+		}
+
+		return pool, nil
 	}
 
 	b := retryConf.Backoff
